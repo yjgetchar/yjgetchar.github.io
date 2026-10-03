@@ -2,18 +2,20 @@
 
 Younjae Lee의 개인 포트폴리오 사이트 → **https://yjgetchar.github.io**
 
-밝은 애플 톤의 **벤토 그리드** 첫 화면과 **핀터레스트식 메이슨리** 프로젝트 보드로 구성했습니다.
+데스크톱은 **왼쪽 고정 사이드바**(프로필, GitHub/LinkedIn, 섹션 내비)와 오른쪽 스크롤 영역(About → Experience → Projects → Contact), 모바일은 맨 위 프로필 카드로 접히는 구성입니다(A안 · 실속형). 오른쪽 아래 **Ask AI** 버튼은 `profile.ts`에 미리 적어 둔 질문과 답변으로 동작해서 서버나 API 키가 필요 없습니다.
 Astro + Tailwind CSS로 만들었고, GitHub Actions로 GitHub Pages에 자동 배포합니다.
+
+디자인 결정 사항과 남은 선택지는 [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md)에 정리합니다.
 
 ## 콘텐츠 수정하기
 
 | 바꾸고 싶은 것 | 파일 |
 |---|---|
-| 이름, 인사말, 소개, 연락처, 관심사 타일, 기술 스택, 경력, 섹션 on/off | [`src/data/profile.ts`](src/data/profile.ts) |
+| 이름, 소개 문단, 지금 만드는 중, 기술 스택, 경력, Ask AI 질문/답변 | [`src/data/profile.ts`](src/data/profile.ts) |
 | 프로젝트 추가·수정 | [`src/content/projects/*.md`](src/content/projects) |
 | 프로젝트 커버 이미지 | [`src/assets/projects/`](src/assets/projects) (빌드할 때 WebP로 자동 변환) |
-| 프로필 사진 | `public/images/`에 넣고 `profile.avatar` 경로 변경 |
-| 색상·파스텔 톤·폰트 | [`src/styles/global.css`](src/styles/global.css) 상단 토큰 |
+| 프로필 사진 | [`src/assets/profile/avatar.jpg`](src/assets/profile) 파일 교체 (정사각형 권장) |
+| 색상·폰트 | [`src/styles/global.css`](src/styles/global.css) 상단 토큰 (zinc + 에메랄드) |
 
 ### 프로젝트 추가 예시
 
@@ -54,19 +56,21 @@ npm run build    # 타입 체크 + 정적 빌드 → dist/
 
 ```
 src/
-├── assets/       projects/*.jpg (커버 이미지)
-├── components/   Header, Footer, ProjectPin, ConstellationWidget, GitHubActivity, Timeline, SectionTitle …
+├── assets/       projects/*.jpg (커버 이미지), profile/avatar.jpg
+├── components/   Sidebar, ProfileCard, AboutIntro, ExperienceList, ProjectCard, AskAI, Footer, GitHubActivity, SectionTitle, Icon
 ├── content/      projects/*.md
 ├── data/         profile.ts  ← 대부분의 콘텐츠
-├── layouts/      BaseLayout.astro (SEO, 테마)
+├── layouts/      BaseLayout.astro (SEO, 테마, 사이드바 2단 레이아웃)
 ├── lib/          github.ts (빌드할 때 GitHub API 호출, 실패해도 빌드는 계속됨)
 ├── pages/        index, about, projects/, projects/[id], 404
-└── styles/       global.css (디자인 토큰, 타일·버튼 컴포넌트, 메이슨리, 다크모드)
+└── styles/       global.css (디자인 토큰, 카드·배지 컴포넌트, 스택 마키, 다크모드)
+docs/             DESIGN_LOG.md (디자인 결정 기록)
 ```
 
 ## 참고한 것
 
-- **디자인:** Apple 제품 페이지의 벤토 그리드, Pinterest의 메이슨리 보드
+- **레이아웃:** [kroszborg.co](https://www.kroszborg.co)의 왼쪽 사이드바와 Experience 목록, [refact0r.dev](https://refact0r.dev/projects)의 프로젝트 카드
+- **분위기:** [attiq.design](https://www.attiq.design), [konpo.studio](https://www.konpo.studio), AI IDE 느낌은 [alejandro-gomez](https://alejandro-gomez.vercel.app/apps/financetelli)
 - [saadpasta/developerFolio](https://github.com/saadpasta/developerFolio): 설정 파일 하나로 콘텐츠 관리
 - [codewithsadee/vcard-personal-portfolio](https://github.com/codewithsadee/vcard-personal-portfolio): 경력 타임라인
 - [soumyajit4419/Portfolio](https://github.com/soumyajit4419/Portfolio): GitHub 기여 그래프
