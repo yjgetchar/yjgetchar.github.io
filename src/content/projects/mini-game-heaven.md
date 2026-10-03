@@ -2,7 +2,8 @@
 title: Mini Game Heaven
 summary: PC 대화면과 스마트폰 컨트롤러를 WebSocket으로 연결하는 실시간 참여형 웹 파티 게임 엔진.
 category: Game
-icon: 🎈
+cover: ../../assets/projects/mini-game-heaven.jpg
+tint: peach
 tags: [TypeScript, WebSocket, Web Audio, Sensors, TDD]
 status: In Progress
 featured: true

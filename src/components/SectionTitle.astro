@@ -1,0 +1,30 @@
+---
+/**
+ * Apple-style section headline: bold lead sentence + muted continuation,
+ * with an optional "더 보기 ›" link on the right.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  lead: string;
+  rest?: string;
+  id?: string;
+  href?: string;
+  linkLabel?: string;
+}
+const { lead, rest, id, href, linkLabel = '모두 보기' } = Astro.props;
+---
+
+<div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+  <h2 id={id} class="headline max-w-3xl">
+    {lead}
+    {rest && <span class="text-subtle"> {rest}</span>}
+  </h2>
+  {
+    href && (
+      <a href={href} class="link-more shrink-0">
+        {linkLabel} <Icon name="chevron" class="size-4" />
+      </a>
+    )
+  }
+</div>

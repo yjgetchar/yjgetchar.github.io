@@ -2,28 +2,19 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import ConstellationCanvas from '../components/ConstellationCanvas.astro';
 import { profile, site } from '../data/profile';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
-  /** Emit Person/WebSite JSON-LD (home page) */
+  /** Emit Person JSON-LD (home page) */
   structuredData?: boolean;
-  /** Show the interactive constellation background */
-  constellation?: boolean;
 }
 
-const {
-  title,
-  description = site.description,
-  image = site.ogImage,
-  structuredData = false,
-  constellation = true,
-} = Astro.props;
+const { title, description = site.description, image = site.ogImage, structuredData = false } = Astro.props;
 
-const pageTitle = title ? `${title} | ${profile.name}` : site.title;
+const pageTitle = title ? `${title} — ${profile.name}` : site.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
 
@@ -64,6 +55,8 @@ const personLd = {
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={profile.name} />
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -82,12 +75,6 @@ const personLd = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
-    />
     <link
       rel="stylesheet"
       crossorigin
@@ -99,29 +86,17 @@ const personLd = {
   <body class="flex min-h-dvh flex-col overflow-x-clip bg-bg font-sans text-fg">
     <a
       href="#main"
-      class="fixed left-4 top-4 z-[70] -translate-y-24 rounded-lg bg-fg px-4 py-2 text-sm font-medium text-bg shadow-lg transition-transform focus:translate-y-0"
+      class="fixed top-3 left-3 z-[70] -translate-y-20 rounded-full bg-fg px-4 py-2 text-sm font-medium text-bg shadow-lg transition-transform focus:translate-y-0"
     >
       본문 바로가기
     </a>
 
-    {constellation && <ConstellationCanvas />}
-    <!-- Soft atmospheric tint -->
-    <div class="site-tint pointer-events-none fixed inset-0 -z-10" aria-hidden="true"></div>
-
     <Header />
 
-    <main id="main" tabindex="-1" class="relative z-10 flex-1 outline-none">
+    <main id="main" tabindex="-1" class="relative flex-1 outline-none">
       <slot />
     </main>
 
     <Footer />
   </body>
 </html>
-
-<style>
-  .site-tint {
-    background:
-      radial-gradient(60rem 40rem at 85% -10%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%),
-      radial-gradient(50rem 35rem at -10% 30%, color-mix(in oklab, var(--accent-2) 10%, transparent), transparent 70%);
-  }
-</style>

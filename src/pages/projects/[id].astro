@@ -1,18 +1,21 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectPin from '../../components/ProjectPin.astro';
 import Icon from '../../components/Icon.astro';
 import { getRepo } from '../../lib/github';
+import { tintBg } from '../../data/profile';
 
 export async function getStaticPaths() {
   const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-  return projects.map((project, i) => ({
+  return projects.map((project) => ({
     params: { id: project.id },
-    props: { project, prev: projects[i - 1], next: projects[i + 1] },
+    props: { project, others: projects.filter((p) => p.id !== project.id).slice(0, 3) },
   }));
 }
 
-const { project, prev, next } = Astro.props;
+const { project, others } = Astro.props;
 const { Content } = await render(project);
 const d = project.data;
 const info = d.repo ? await getRepo(d.repo) : null;
@@ -20,113 +23,107 @@ const dateLabel = d.date.toLocaleDateString('ko-KR', { year: 'numeric', month: '
 ---
 
 <BaseLayout title={d.title} description={d.summary}>
-  <article class="mx-auto max-w-3xl px-6 pt-12 pb-24 md:pt-16">
-    <a
-      href="/projects"
-      class="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-accent"
-      data-rise
-    >
+  <article class="mx-auto max-w-[1120px] px-4 pt-8 sm:px-5 md:pt-12">
+    <a href="/projects" class="link-more" data-rise>
       <Icon name="chevron" class="size-4 rotate-180" /> 모든 프로젝트
     </a>
 
-    <header class="mt-8" data-rise style="--i:1">
-      <div class="flex flex-wrap items-center gap-2 font-mono text-xs text-subtle">
-        <span class="rounded-full border border-line px-2.5 py-0.5">{d.category}</span>
-        <span>·</span>
-        <span>{d.status}</span>
-        <span>·</span>
-        <time datetime={d.date.toISOString()}>{dateLabel}</time>
-      </div>
-      <h1 class="mt-4 flex items-center gap-3 font-heading text-4xl font-bold tracking-tight sm:text-5xl">
-        <span aria-hidden="true">{d.icon}</span>
-        {d.title}
-      </h1>
-      <p class="mt-4 text-lg leading-relaxed text-muted">{d.summary}</p>
-
-      <div class="mt-6 flex flex-wrap gap-3">
-        {
-          d.repo && (
-            <a
-              href={info?.html_url ?? `https://github.com/${d.repo}`}
-              target="_blank"
-              rel="noopener"
-              class="glass inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors hover:bg-surface-strong"
-            >
-              <Icon name="github" class="size-4" /> GitHub
-              {info && (
-                <span class="inline-flex items-center gap-0.5 font-mono text-xs text-subtle">
-                  <Icon name="star" class="size-3" />
-                  {info.stargazers_count}
-                </span>
-              )}
-            </a>
-          )
-        }
-        {
-          d.demo && (
-            <a
-              href={d.demo}
-              target="_blank"
-              rel="noopener"
-              class="inline-flex items-center gap-2 rounded-lg bg-fg px-4 py-2.5 text-sm font-medium text-bg transition-opacity hover:opacity-85"
-            >
-              <Icon name="external" class="size-4" /> Live Demo
-            </a>
-          )
-        }
+    <!-- Hero: bento of cover + summary -->
+    <div class="mt-6 grid gap-4 md:grid-cols-5">
+      <div data-rise style="--i:1" class:list={['tile flex items-center justify-center md:col-span-3', tintBg[d.tint]]}>
+        <Image
+          src={d.cover}
+          alt={`${d.title} 대표 이미지`}
+          widths={[600, 1000]}
+          sizes="(min-width: 768px) 660px, 100vw"
+          loading="eager"
+          class="h-auto max-h-[560px] w-full object-contain"
+        />
       </div>
 
-      <div class="mt-6 flex flex-wrap gap-1.5">
-        {d.tags.map((t) => <span class="tag">{t}</span>)}
-      </div>
-    </header>
+      <div data-rise style="--i:2" class="tile flex flex-col p-7 sm:p-9 md:col-span-2">
+        <div class="flex flex-wrap gap-1.5">
+          <span class="chip">{d.category}</span>
+          <span class="chip">{d.status}</span>
+          <span class="chip"><time datetime={d.date.toISOString()}>{dateLabel}</time></span>
+        </div>
+        <h1 class="mt-5 text-[34px] leading-[1.08] font-bold tracking-[-0.03em] sm:text-[40px]">{d.title}</h1>
+        <p class="mt-4 text-[17px] leading-relaxed text-muted">{d.summary}</p>
 
+        <div class="mt-6 flex flex-wrap gap-1.5">
+          {d.tags.map((t) => <span class="chip">{t}</span>)}
+        </div>
+
+        <div class="mt-auto flex flex-wrap gap-2.5 pt-8">
+          {
+            d.demo && (
+              <a href={d.demo} target="_blank" rel="noopener" class="btn-primary">
+                사이트 열기 <Icon name="external" class="size-4" />
+              </a>
+            )
+          }
+          {
+            d.repo && (
+              <a
+                href={info?.html_url ?? `https://github.com/${d.repo}`}
+                target="_blank"
+                rel="noopener"
+                class={d.demo ? 'btn-secondary' : 'btn-primary'}
+              >
+                <Icon name="github" class="size-4" /> GitHub
+                {info && (
+                  <span class="inline-flex items-center gap-0.5 text-[13px] opacity-70">
+                    <Icon name="star" class="size-3" />
+                    {info.stargazers_count}
+                  </span>
+                )}
+              </a>
+            )
+          }
+          {!d.demo && !d.repo && <p class="text-[13px] text-subtle">🔒 비공개 프로젝트예요.</p>}
+        </div>
+      </div>
+    </div>
+
+    <!-- Highlights as small bento tiles -->
     {
       d.highlights.length > 0 && (
-        <section
-          class="glass mt-10 rounded-2xl p-6"
-          aria-labelledby="h-highlights"
-          data-rise
-          style="--i:2"
-        >
-          <h2 id="h-highlights" class="font-mono text-[11px] font-medium tracking-[0.2em] text-accent uppercase">
-            Highlights
-          </h2>
-          <ul class="mt-4 space-y-2.5">
-            {d.highlights.map((h) => (
-              <li class="flex gap-3 text-sm leading-relaxed text-muted">
-                <span class="mt-2 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                {h}
-              </li>
-            ))}
-          </ul>
+        <section class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="하이라이트">
+          {d.highlights.map((h, i) => (
+            <div data-reveal class="tile p-6">
+              <p class:list={['grid size-9 place-items-center rounded-full text-[15px] font-bold', tintBg[d.tint]]}>
+                {i + 1}
+              </p>
+              <p class="mt-4 text-[15px] leading-relaxed font-medium">{h}</p>
+            </div>
+          ))}
         </section>
       )
     }
 
-    <div class="glass prose-body mt-8 rounded-2xl p-6 sm:p-8">
-      <Content />
+    <!-- Body -->
+    <div class="mx-auto mt-16 max-w-[720px]">
+      <div class="prose-body">
+        <Content />
+      </div>
     </div>
 
-    <nav class="mt-12 grid gap-4 sm:grid-cols-2" aria-label="다른 프로젝트">
-      {
-        prev ? (
-          <a href={`/projects/${prev.id}`} class="glass lift rounded-2xl p-5">
-            <span class="font-mono text-[11px] text-subtle">← 이전</span>
-            <span class="mt-1 block font-heading font-semibold">{prev.data.title}</span>
-          </a>
-        ) : (
-          <span />
-        )
-      }
-      {
-        next && (
-          <a href={`/projects/${next.id}`} class="glass lift rounded-2xl p-5 text-right">
-            <span class="font-mono text-[11px] text-subtle">다음 →</span>
-            <span class="mt-1 block font-heading font-semibold">{next.data.title}</span>
-          </a>
-        )
-      }
-    </nav>
+    <!-- More projects -->
+    {
+      others.length > 0 && (
+        <section class="mt-24" aria-labelledby="h-more">
+          <h2 id="h-more" class="headline mb-8">
+            다른 프로젝트<span class="text-subtle">도 둘러보세요.</span>
+          </h2>
+          <div class="masonry">
+            {others.map((p) => (
+              <div data-reveal>
+                <ProjectPin project={p} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
   </article>
 </BaseLayout>

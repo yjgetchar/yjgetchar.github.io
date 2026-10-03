@@ -6,28 +6,24 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => !href.includes('#') && (path === href || path.startsWith(`${href}/`));
 ---
 
-<header class="sticky top-0 z-50 border-b border-line bg-bg/60 backdrop-blur-md">
-  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-2 sm:py-3" aria-label="주 메뉴">
-    <a
-      href="/"
-      class="inline-flex min-h-11 items-center gap-2 font-heading text-lg font-bold tracking-tight transition-colors hover:text-accent"
-    >
-      <span class="grid size-7 place-items-center rounded-lg bg-accent text-[13px] font-bold text-bg" aria-hidden="true">
-        {profile.shortName.charAt(0)}
-      </span>
+<!-- Apple-style translucent global nav -->
+<header class="sticky top-0 z-50 border-b border-line bg-bg/75 backdrop-blur-xl backdrop-saturate-150">
+  <nav class="mx-auto flex h-13 max-w-[1120px] items-center justify-between px-5" aria-label="주 메뉴">
+    <a href="/" class="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold tracking-tight">
+      <img src="/favicon.svg" alt="" width="22" height="22" class="size-[22px] rounded-md" />
       {profile.name}
     </a>
 
     <!-- Desktop -->
-    <div class="hidden items-center gap-7 text-sm md:flex">
+    <div class="hidden items-center gap-1 md:flex">
       {
         nav.map((item) => (
           <a
             href={item.href}
             aria-current={isActive(item.href) ? 'page' : undefined}
             class:list={[
-              'transition-colors hover:text-fg',
-              isActive(item.href) ? 'font-medium text-fg' : 'text-muted',
+              'rounded-full px-3.5 py-1.5 text-[13px] transition-colors',
+              isActive(item.href) ? 'bg-fg/[0.07] font-medium text-fg' : 'text-muted hover:text-fg',
             ]}
           >
             {item.label}
@@ -37,11 +33,11 @@ const isActive = (href: string) => !href.includes('#') && (path === href || path
       <button
         type="button"
         data-theme-toggle
-        class="inline-flex size-11 cursor-pointer items-center justify-center text-muted transition-colors hover:text-fg"
+        class="ml-1 inline-flex size-10 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
         aria-label="다크 모드 전환"
       >
-        <span class="theme-icon-moon"><Icon name="moon" class="size-5" /></span>
-        <span class="theme-icon-sun"><Icon name="sun" class="size-5" /></span>
+        <span class="theme-icon-moon"><Icon name="moon" class="size-[18px]" /></span>
+        <span class="theme-icon-sun"><Icon name="sun" class="size-[18px]" /></span>
       </button>
     </div>
 
@@ -50,7 +46,7 @@ const isActive = (href: string) => !href.includes('#') && (path === href || path
       <button
         type="button"
         data-theme-toggle
-        class="inline-flex size-11 cursor-pointer items-center justify-center text-muted transition-colors hover:text-fg"
+        class="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted"
         aria-label="다크 모드 전환"
       >
         <span class="theme-icon-moon"><Icon name="moon" class="size-5" /></span>
@@ -59,7 +55,7 @@ const isActive = (href: string) => !href.includes('#') && (path === href || path
       <button
         type="button"
         popovertarget="mobile-menu"
-        class="inline-flex size-11 cursor-pointer items-center justify-center text-muted transition-colors hover:text-fg"
+        class="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted"
         aria-label="메뉴 열기"
       >
         <Icon name="menu" class="size-6" />
@@ -68,14 +64,14 @@ const isActive = (href: string) => !href.includes('#') && (path === href || path
   </nav>
 
   <!-- Popover gives us light-dismiss, Esc-to-close and focus handling for free -->
-  <div id="mobile-menu" popover class="mobile-menu glass rounded-2xl p-2 shadow-2xl md:hidden">
+  <div id="mobile-menu" popover class="mobile-menu tile p-2 md:hidden">
     <ul class="flex flex-col">
       {
         nav.map((item) => (
           <li>
             <a
               href={item.href}
-              class="flex min-h-12 items-center rounded-xl px-4 text-base text-muted transition-colors hover:bg-accent-soft hover:text-fg"
+              class="flex min-h-12 items-center rounded-2xl px-4 text-[17px] font-medium transition-colors hover:bg-fg/[0.05]"
             >
               {item.label}
             </a>
@@ -89,18 +85,17 @@ const isActive = (href: string) => !href.includes('#') && (path === href || path
 <style>
   .mobile-menu {
     position: fixed;
-    inset: 4.25rem 1rem auto 1rem;
+    inset: 3.75rem 0.75rem auto 0.75rem;
     margin: 0;
     width: auto;
     color: var(--fg);
-    background-color: var(--surface-strong);
     opacity: 0;
     translate: 0 -8px;
     transition:
-      opacity 180ms ease,
-      translate 180ms ease,
-      display 180ms allow-discrete,
-      overlay 180ms allow-discrete;
+      opacity 200ms ease,
+      translate 200ms ease,
+      display 200ms allow-discrete,
+      overlay 200ms allow-discrete;
   }
   .mobile-menu:popover-open {
     opacity: 1;

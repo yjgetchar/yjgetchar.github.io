@@ -2,7 +2,8 @@
 title: Gemini Blog Posting Agent
 summary: 키워드 하나로 IT 기술 블로그 글을 쓰고 서식을 입혀 구글 블로거에 발행하는 텔레그램 에이전트.
 category: Automation
-icon: ✍️
+cover: ../../assets/projects/autoposting-gemini.jpg
+tint: rose
 tags: [Python, Gemini, Blogger API, Telegram Bot]
 status: Private
 featured: true

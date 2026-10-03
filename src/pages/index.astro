@@ -1,153 +1,191 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import ProjectPin from '../components/ProjectPin.astro';
 import Timeline from '../components/Timeline.astro';
 import GitHubActivity from '../components/GitHubActivity.astro';
+import ConstellationWidget from '../components/ConstellationWidget.astro';
 import Icon from '../components/Icon.astro';
-import { profile, stats, expertise, sections } from '../data/profile';
+import { profile, expertise, sections, tintBg } from '../data/profile';
 
-const all = await getCollection('projects');
-const featured = all
-  .filter((p) => p.data.featured)
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
-
-// Number sections dynamically so toggling one off keeps the sequence tidy.
-let n = 0;
-const next = () => ++n;
-
-const toneBorder: Record<string, string> = {
-  accent: 'border-l-accent/50',
-  'accent-2': 'border-l-accent-2/50',
-};
-const toneTag: Record<string, string> = {
-  accent: 'text-accent bg-accent-soft border-accent/20',
-  'accent-2': 'text-accent-2 bg-accent-2/10 border-accent-2/20',
-};
+const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featured = all.filter((p) => p.data.featured);
+const now = all.find((p) => p.data.status === 'In Progress') ?? all[0];
+const contactHref = profile.email ? `mailto:${profile.email}` : `https://github.com/${profile.github}`;
 ---
 
 <BaseLayout structuredData>
-  <!-- Hero -->
-  <section class="px-6 pt-16 pb-10 md:pt-24 md:pb-14">
-    <div class="mx-auto flex w-full max-w-6xl flex-col md:flex-row md:items-center md:gap-16">
-      <div class="min-w-0 flex-1">
-        <div
-          data-rise
-          class="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-surface px-3.5 py-1.5 backdrop-blur"
-        >
-          <span class="relative flex size-2">
-            <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60 motion-reduce:hidden"
-            ></span>
-            <span class="relative inline-flex size-2 rounded-full bg-accent"></span>
-          </span>
-          <span class="font-mono text-[11px] font-medium tracking-[0.18em] text-accent uppercase">{profile.role}</span>
-        </div>
-
-        <h1
-          data-rise
-          style="--i:1"
-          class="hero-gradient mt-6 pb-2 font-heading text-6xl font-bold tracking-tight sm:text-7xl lg:text-8xl"
-        >
-          {profile.name}
-        </h1>
-        <p
-          data-rise
-          style="--i:2"
-          class="mt-4 font-heading text-xl font-medium whitespace-pre-line text-fg/85 sm:text-2xl"
-        >
-          {profile.headline}
-        </p>
-        <p data-rise style="--i:3" class="mt-6 max-w-xl leading-relaxed text-muted">{profile.intro}</p>
-
-        <div data-rise style="--i:4" class="mt-9 flex flex-wrap gap-3">
-          {
-            profile.socials.map((s) => (
-              <a
-                href={s.href}
-                target="_blank"
-                rel="noopener"
-                class="group glass inline-flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm font-medium transition-[background-color,border-color,box-shadow] hover:border-accent/30 hover:bg-surface-strong hover:shadow-sm sm:px-5"
-              >
-                <Icon name={s.icon} class="size-4 text-muted transition-colors group-hover:text-fg" />
-                {s.label}
-              </a>
-            ))
-          }
-          <a
-            href="/projects"
-            class="inline-flex items-center gap-2 rounded-lg bg-fg px-4 py-2.5 text-sm font-medium text-bg transition-opacity hover:opacity-85 sm:px-5"
+  <div class="mx-auto max-w-[1120px] px-4 sm:px-5">
+    <!-- ───────────── Bento hero ───────────── -->
+    <section
+      aria-label="소개"
+      class="grid grid-flow-dense auto-rows-[minmax(168px,auto)] grid-cols-2 gap-3 pt-6 sm:gap-4 md:grid-cols-4 md:pt-10"
+    >
+      <!-- Intro -->
+      <div data-rise class="tile col-span-2 row-span-2 flex flex-col justify-between p-7 sm:p-9">
+        <div>
+          <p class="text-[15px] font-medium text-muted">{profile.greeting}</p>
+          <h1
+            class="mt-3 text-[40px] leading-[1.06] font-bold tracking-[-0.035em] whitespace-pre-line sm:text-[52px] lg:text-[56px]"
           >
-            프로젝트 보기
-            <Icon name="arrow-right" class="size-4" />
+            {profile.headline}
+          </h1>
+          <p class="mt-5 max-w-md text-[15px] leading-relaxed text-muted">{profile.intro}</p>
+        </div>
+        <div class="mt-7 flex flex-wrap gap-2.5">
+          <a href="/projects" class="btn-primary">프로젝트 보기 <Icon name="chevron" class="size-4" /></a>
+          <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener" class="btn-secondary">
+            <Icon name="github" class="size-4" /> GitHub
           </a>
         </div>
+      </div>
 
-        <p data-rise style="--i:5" class="mt-8 hidden font-mono text-xs text-subtle sm:block">
-          <span class="text-accent">$</span> 배경의 별자리는 제가 쓰는 기술 스택이에요. 마우스를 움직이거나 빈 곳을 클릭해 보세요.
+      <!-- Avatar -->
+      <div data-rise style="--i:1" class="tile col-span-1 row-span-1 md:row-span-2">
+        <img
+          src={profile.avatar}
+          alt={profile.name}
+          width="400"
+          height="400"
+          fetchpriority="high"
+          class="absolute inset-0 size-full object-cover"
+        />
+        <div
+          class="absolute inset-x-3 bottom-3 hidden rounded-2xl bg-white/80 px-3.5 py-2.5 text-[#1d1d1f] backdrop-blur-md md:block"
+        >
+          <p class="text-[14px] font-semibold tracking-tight">{profile.name}</p>
+          <p class="text-[11px] text-[#6e6e73]">{profile.role}</p>
+        </div>
+      </div>
+
+      <!-- Now building -->
+      {
+        now && (
+          <a
+            href={`/projects/${now.id}`}
+            data-rise
+            style="--i:2"
+            class:list={['tile tile-hover col-span-1 flex flex-col p-5', tintBg[now.data.tint]]}
+          >
+            <p class="eyebrow flex items-center gap-1.5">
+              <span class="relative flex size-2">
+                <span class="absolute inline-flex size-full animate-ping rounded-full bg-[#30d158] opacity-60 motion-reduce:hidden" />
+                <span class="relative inline-flex size-2 rounded-full bg-[#30d158]" />
+              </span>
+              지금 만드는 중
+            </p>
+            <p class="mt-2 text-[19px] leading-tight font-bold tracking-tight">{now.data.title}</p>
+            <Image
+              src={now.data.cover}
+              alt=""
+              width={160}
+              class="mt-auto ml-auto size-16 rounded-2xl object-cover shadow-md"
+            />
+          </a>
+        )
+      }
+
+      <!-- Local time -->
+      <div data-rise style="--i:3" class="tile col-span-1 flex flex-col bg-t-blue p-5">
+        <p class="eyebrow">📍 {profile.location}</p>
+        <p class="mt-auto text-[40px] leading-none font-bold tracking-[-0.04em] tabular-nums" data-clock>--:--</p>
+        <p class="mt-1.5 text-[13px] text-muted" data-clock-date>&nbsp;</p>
+      </div>
+
+      <!-- Constellation widget -->
+      <div
+        data-rise
+        style="--i:4"
+        class="tile col-span-2 min-h-[200px] cursor-grab bg-t-lavender active:cursor-grabbing"
+      >
+        <ConstellationWidget />
+        <p
+          class="pointer-events-none absolute top-4 left-5 rounded-full bg-surface/80 px-3 py-1 text-[12px] font-semibold text-muted backdrop-blur"
+        >
+          ✨ 기술 스택 · 만지거나 눌러보세요
         </p>
       </div>
 
-      <div data-rise style="--i:2" class="hidden shrink-0 md:block">
-        <div class="relative">
-          <div
-            class="absolute -inset-5 rounded-full bg-gradient-to-br from-accent/20 to-accent-2/20 blur-2xl"
-            aria-hidden="true"
-          >
-          </div>
-          <img
-            src={profile.avatar}
-            alt={profile.name}
-            width="208"
-            height="208"
-            fetchpriority="high"
-            class="relative size-52 rounded-full border-[6px] border-surface-strong object-cover shadow-xl"
-          />
-        </div>
+      <!-- Focus -->
+      <div data-rise style="--i:5" class="tile col-span-2 flex flex-col bg-t-butter p-6">
+        <p class="eyebrow">요즘 관심사</p>
+        <ul class="mt-auto grid grid-cols-3 gap-3 pt-4">
+          {
+            expertise.map((e) => (
+              <li class="rounded-2xl bg-surface/70 p-3.5">
+                <span class="text-[28px] leading-none" aria-hidden="true">
+                  {e.emoji}
+                </span>
+                <p class="mt-2 text-[13px] leading-snug font-semibold">{e.title}</p>
+              </li>
+            ))
+          }
+        </ul>
       </div>
-    </div>
-  </section>
 
-  <!-- Stats -->
-  {
-    sections.stats && (
-      <section class="px-6 pb-16" aria-label="요약">
-        <div class="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
-          {stats.map((s, i) => (
-            <a href={s.href} data-rise style={`--i:${i + 5}`} class="glass lift group rounded-2xl p-5">
-              <p class="font-heading text-3xl font-bold">
-                {s.value}
-                <span class="text-accent">{s.suffix}</span>
-              </p>
-              <p class="mt-1.5 text-sm font-medium transition-colors group-hover:text-accent">{s.label}</p>
-              <p class="mt-0.5 font-mono text-[11px] text-subtle">{s.caption}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-    )
-  }
+      <!-- GitHub activity -->
+      <div data-rise style="--i:6" class="tile col-span-2 p-6">
+        <GitHubActivity weeks={26} />
+      </div>
 
-  <div class="mx-auto max-w-6xl space-y-12 px-6 pb-24 sm:space-y-20">
-    <!-- Expertise -->
+      <!-- Project count -->
+      <a href="/projects" data-rise style="--i:7" class="tile tile-hover col-span-1 flex flex-col bg-t-mint p-5">
+        <p class="eyebrow">프로젝트</p>
+        <p class="mt-auto text-[56px] leading-none font-bold tracking-[-0.04em]">{all.length}</p>
+        <p class="mt-1 flex items-center gap-0.5 text-[13px] font-medium text-accent">
+          모두 보기 <Icon name="chevron" class="size-3.5" />
+        </p>
+      </a>
+
+      <!-- Contact -->
+      <a
+        href={contactHref}
+        target={profile.email ? undefined : '_blank'}
+        rel={profile.email ? undefined : 'noopener'}
+        data-rise
+        style="--i:8"
+        class="tile tile-hover col-span-2 flex flex-col bg-accent p-5 text-white md:col-span-1"
+      >
+        <p class="text-[13px] font-semibold text-white/75">Contact</p>
+        <Icon name="external" class="mt-auto ml-auto size-7" />
+        <p class="mt-2 text-[22px] leading-tight font-bold tracking-tight">연락하기</p>
+      </a>
+    </section>
+
+    <!-- ───────────── Projects (Pinterest masonry) ───────────── -->
+    {
+      sections.projects && (
+        <section class="mt-24 sm:mt-32" aria-labelledby="h-projects">
+          <SectionTitle id="h-projects" lead="만든 것들." rest="직접 기획하고, 만들고, 운영해요." href="/projects" />
+          <div class="masonry">
+            {featured.map((p, i) => (
+              <div data-reveal>
+                <ProjectPin project={p} eager={i < 2} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ───────────── Expertise ───────────── -->
     {
       sections.expertise && (
-        <section
-          id="expertise"
-          aria-labelledby="h-expertise"
-          data-reveal
-          class="glass scroll-mt-24 rounded-[24px] p-5 shadow-xl shadow-black/5 sm:rounded-[32px] sm:p-8"
-        >
-          <SectionHeading index={next()} eyebrow="What I do" title="무엇을 하는가" id="h-expertise" />
-          <div class="grid gap-5 lg:grid-cols-3">
+        <section class="mt-24 sm:mt-32" aria-labelledby="h-expertise">
+          <SectionTitle id="h-expertise" lead="잘하는 일." rest="아이디어에서 출시까지." />
+          <div class="grid gap-4 md:grid-cols-3">
             {expertise.map((e) => (
-              <div class:list={['rounded-2xl border border-l-2 border-line bg-surface-strong/40 p-6', toneBorder[e.tone]]}>
-                <h3 class="font-heading text-lg font-semibold">{e.title}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-muted">{e.body}</p>
-                <div class="mt-4 flex flex-wrap gap-1.5">
+              <div data-reveal class:list={['tile flex flex-col p-7', tintBg[e.tint]]}>
+                <span class="text-[44px] leading-none" aria-hidden="true">
+                  {e.emoji}
+                </span>
+                <h3 class="mt-6 text-[21px] font-bold tracking-tight">{e.title}</h3>
+                <p class="mt-2 text-[15px] leading-relaxed text-muted">{e.body}</p>
+                <div class="mt-auto flex flex-wrap gap-1.5 pt-6">
                   {e.tags.map((t) => (
-                    <span class:list={['rounded-md border px-2 py-0.5 font-mono text-[11px]', toneTag[e.tone]]}>{t}</span>
+                    <span class="chip bg-surface/70">{t}</span>
                   ))}
                 </div>
               </div>
@@ -157,103 +195,74 @@ const toneTag: Record<string, string> = {
       )
     }
 
-    <!-- Featured projects -->
-    {
-      sections.projects && (
-        <section
-          id="projects"
-          aria-labelledby="h-projects"
-          data-reveal
-          class="glass scroll-mt-24 rounded-[24px] p-5 shadow-xl shadow-black/5 sm:rounded-[32px] sm:p-8"
-        >
-          <SectionHeading index={next()} eyebrow="Featured Work" title="대표 프로젝트" id="h-projects" />
-          <div class="grid gap-5 md:grid-cols-2">
-            {featured.map((p) => (
-              <ProjectCard project={p} />
-            ))}
-          </div>
-          <div class="mt-7 text-center">
-            <a
-              href="/projects"
-              class="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
-            >
-              {all.length}개 프로젝트 전체 보기
-              <Icon name="arrow-right" class="size-4" />
-            </a>
-          </div>
-        </section>
-      )
-    }
-
-    <!-- Timeline -->
+    <!-- ───────────── Timeline ───────────── -->
     {
       sections.timeline && (
-        <section
-          id="journey"
-          aria-labelledby="h-journey"
-          data-reveal
-          class="glass scroll-mt-24 rounded-[24px] p-5 shadow-xl shadow-black/5 sm:rounded-[32px] sm:p-8"
-        >
-          <SectionHeading index={next()} eyebrow="Journey" title="걸어온 길" id="h-journey" />
-          <Timeline />
+        <section class="mt-24 sm:mt-32" aria-labelledby="h-journey">
+          <SectionTitle id="h-journey" lead="걸어온 길." rest="지금까지의 이야기." href="/about" linkLabel="소개 더 보기" />
+          <div data-reveal class="tile p-7 sm:p-9">
+            <Timeline />
+          </div>
         </section>
       )
     }
 
-    <!-- GitHub activity -->
-    {
-      sections.github && (
-        <section
-          id="github"
-          aria-labelledby="h-github"
-          data-reveal
-          class="glass scroll-mt-24 rounded-[24px] p-5 shadow-xl shadow-black/5 sm:rounded-[32px] sm:p-8"
-        >
-          <SectionHeading index={next()} eyebrow="Activity" title="GitHub 활동" id="h-github" />
-          <GitHubActivity />
-        </section>
-      )
-    }
-
-    <!-- Contact -->
+    <!-- ───────────── Contact ───────────── -->
     {
       sections.contact && (
-        <section
-          id="contact"
-          aria-labelledby="h-contact"
-          data-reveal
-          class="glass scroll-mt-24 rounded-[24px] p-6 text-center shadow-xl shadow-black/5 sm:rounded-[32px] sm:p-10"
-        >
-          <div class="font-mono text-[11px] font-medium tracking-[0.2em] text-subtle uppercase">
-            <span class="text-accent">{String(next()).padStart(2, '0')}</span> — Contact
-          </div>
-          <h2 id="h-contact" class="mt-3 font-heading text-2xl font-semibold sm:text-3xl">
-            함께 만들고 싶은 게 있다면
-          </h2>
-          <p class="mt-3 text-sm text-muted">협업 제안, 피드백, 아이디어 모두 환영합니다.</p>
-          <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
-            {profile.email ? (
-              <a
-                href={`mailto:${profile.email}`}
-                class="inline-flex items-center gap-2.5 rounded-lg bg-fg px-6 py-3 text-sm font-medium text-bg transition-opacity hover:opacity-85"
-              >
-                <Icon name="mail" class="size-4" />
-                {profile.email}
+        <section id="contact" class="mt-24 sm:mt-32" aria-labelledby="h-contact">
+          <div data-reveal class="tile px-7 py-16 text-center sm:py-20">
+            <p class="text-[44px] leading-none" aria-hidden="true">
+              👋
+            </p>
+            <h2 id="h-contact" class="headline mt-5">
+              함께 만들어요.
+            </h2>
+            <p class="mx-auto mt-3 max-w-md text-[17px] text-muted">협업 제안, 피드백, 아이디어 모두 환영합니다.</p>
+            <div class="mt-8 flex flex-wrap justify-center gap-2.5">
+              {profile.email ? (
+                <a href={`mailto:${profile.email}`} class="btn-primary">
+                  <Icon name="mail" class="size-4" /> {profile.email}
+                </a>
+              ) : (
+                <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener" class="btn-primary">
+                  <Icon name="github" class="size-4" /> GitHub에서 연락하기
+                </a>
+              )}
+              <a href="/about" class="btn-secondary">
+                소개 보기
               </a>
-            ) : (
-              <a
-                href={`https://github.com/${profile.github}`}
-                target="_blank"
-                rel="noopener"
-                class="inline-flex items-center gap-2.5 rounded-lg bg-fg px-6 py-3 text-sm font-medium text-bg transition-opacity hover:opacity-85"
-              >
-                <Icon name="github" class="size-4" />
-                GitHub에서 연락하기
-              </a>
-            )}
+            </div>
           </div>
         </section>
       )
     }
   </div>
 </BaseLayout>
+
+<script>
+  // Live local-time widget
+  import { profile } from '../data/profile';
+
+  const clock = document.querySelector<HTMLElement>('[data-clock]');
+  const dateEl = document.querySelector<HTMLElement>('[data-clock-date]');
+  const timeFmt = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: profile.timezone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  const dateFmt = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: profile.timezone,
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  });
+  function tick() {
+    const d = new Date();
+    if (clock) clock.textContent = timeFmt.format(d);
+    if (dateEl) dateEl.textContent = dateFmt.format(d);
+  }
+  tick();
+  setInterval(tick, 15_000);
+</script>

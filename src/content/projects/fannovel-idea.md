@@ -2,7 +2,8 @@
 title: Fan Novel Idea Helper
 summary: Gemini 세션 유지와 실시간 구글 검색을 갖춘 텔레그램 기반 소설 집필·브레인스토밍 어시스턴트 봇.
 category: AI
-icon: 📚
+cover: ../../assets/projects/fannovel-idea.jpg
+tint: lavender
 tags: [Python, Gemini 2.5 Flash, Search Grounding, Telegram Bot]
 repo: yjgetchar/262Q_Fannovel_idea
 status: Live

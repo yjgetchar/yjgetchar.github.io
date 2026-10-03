@@ -2,23 +2,18 @@
 import { timeline } from '../data/profile';
 ---
 
-<ol class="relative ml-1.5 border-l border-line">
+<ol class="divide-y divide-line">
   {
     timeline.map((item) => (
-      <li class="relative pb-9 pl-7 last:pb-0" data-reveal>
-        <span
-          class:list={[
-            'absolute top-1.5 -left-[7px] size-3.5 rounded-full border-2 border-bg',
-            item.kind === 'edu' ? 'bg-accent-2' : 'bg-accent',
-          ]}
-          aria-hidden="true"
-        />
-        <p class="font-mono text-xs tracking-wide text-subtle">{item.period}</p>
-        <h3 class="mt-1 font-heading text-lg font-semibold">
-          {item.title}
-          <span class="font-sans text-base font-normal text-muted"> · {item.org}</span>
-        </h3>
-        <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted">{item.body}</p>
+      <li class="grid gap-1 py-5 first:pt-0 last:pb-0 sm:grid-cols-[160px_1fr] sm:gap-6">
+        <p class="text-[13px] font-medium text-subtle sm:pt-0.5">{item.period}</p>
+        <div>
+          <h3 class="flex flex-wrap items-center gap-2 text-[17px] font-semibold tracking-tight">
+            {item.title}
+            <span class:list={['chip', item.kind === 'edu' ? 'bg-t-lavender' : 'bg-t-blue']}>{item.org}</span>
+          </h3>
+          <p class="mt-1.5 text-[15px] leading-relaxed text-muted">{item.body}</p>
+        </div>
       </li>
     ))
   }

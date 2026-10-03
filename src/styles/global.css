@@ -4,46 +4,58 @@
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 /* ------------------------------------------------------------------
- * Design tokens
+ * Design tokens — bright, Apple-like neutrals + soft pastel tile tints.
  * Raw light/dark values are kept separately so they can be combined
  * with light-dark() and still fall back to prefers-color-scheme.
- * The page follows the OS theme by default; the toggle in the header
- * pins a scheme by updating <meta name="color-scheme">.
  * ------------------------------------------------------------------ */
 :root {
   color-scheme: light dark;
 
-  --bg-l: #f6f7f9;
-  --bg-d: #0a0c10;
-  --surface-l: rgb(255 255 255 / 0.62);
-  --surface-d: rgb(22 26 34 / 0.62);
-  --surface-strong-l: #ffffff;
-  --surface-strong-d: #151922;
-  --line-l: rgb(15 23 42 / 0.08);
-  --line-d: rgb(255 255 255 / 0.08);
-  --fg-l: #16191f;
-  --fg-d: #e8eaef;
-  --muted-l: #545b68;
-  --muted-d: #a0a8b6;
-  --subtle-l: #8a919e;
-  --subtle-d: #6c7484;
-  --accent-l: #0d8f84;
-  --accent-d: #2dd4bf;
-  --accent-2-l: #6250f0;
-  --accent-2-d: #a5b4fc;
-  --accent-soft-l: rgb(13 143 132 / 0.09);
-  --accent-soft-d: rgb(45 212 191 / 0.12);
+  --bg-l: #f5f5f7;
+  --bg-d: #000000;
+  --surface-l: #ffffff;
+  --surface-d: #1c1c1e;
+  --line-l: rgb(0 0 0 / 0.06);
+  --line-d: rgb(255 255 255 / 0.09);
+  --fg-l: #1d1d1f;
+  --fg-d: #f5f5f7;
+  --muted-l: #6e6e73;
+  --muted-d: #a1a1a6;
+  --subtle-l: #86868b;
+  --subtle-d: #6e6e73;
+  --accent-l: #0071e3;
+  --accent-d: #2997ff;
+
+  /* Pastel tile tints */
+  --t-blue-l: #e8f1fd;
+  --t-blue-d: #0f1e33;
+  --t-mint-l: #e4f5ec;
+  --t-mint-d: #0e2a1e;
+  --t-peach-l: #fdeee3;
+  --t-peach-d: #33200f;
+  --t-lavender-l: #efebfd;
+  --t-lavender-d: #1f1a36;
+  --t-butter-l: #fdf6d8;
+  --t-butter-d: #2d2710;
+  --t-rose-l: #fde8ec;
+  --t-rose-d: #34161d;
 
   --bg: light-dark(var(--bg-l), var(--bg-d));
   --surface: light-dark(var(--surface-l), var(--surface-d));
-  --surface-strong: light-dark(var(--surface-strong-l), var(--surface-strong-d));
   --line: light-dark(var(--line-l), var(--line-d));
   --fg: light-dark(var(--fg-l), var(--fg-d));
   --muted: light-dark(var(--muted-l), var(--muted-d));
   --subtle: light-dark(var(--subtle-l), var(--subtle-d));
   --accent: light-dark(var(--accent-l), var(--accent-d));
-  --accent-2: light-dark(var(--accent-2-l), var(--accent-2-d));
-  --accent-soft: light-dark(var(--accent-soft-l), var(--accent-soft-d));
+  --t-blue: light-dark(var(--t-blue-l), var(--t-blue-d));
+  --t-mint: light-dark(var(--t-mint-l), var(--t-mint-d));
+  --t-peach: light-dark(var(--t-peach-l), var(--t-peach-d));
+  --t-lavender: light-dark(var(--t-lavender-l), var(--t-lavender-d));
+  --t-butter: light-dark(var(--t-butter-l), var(--t-butter-d));
+  --t-rose: light-dark(var(--t-rose-l), var(--t-rose-d));
+
+  --shadow-tile: 0 1px 2px rgb(0 0 0 / 0.04), 0 10px 30px -14px rgb(0 0 0 / 0.1);
+  --shadow-tile-hover: 0 2px 4px rgb(0 0 0 / 0.05), 0 22px 44px -18px rgb(0 0 0 / 0.18);
 
   accent-color: var(--accent);
   scrollbar-color: var(--subtle) transparent;
@@ -55,50 +67,63 @@
   :root {
     --bg: var(--bg-l);
     --surface: var(--surface-l);
-    --surface-strong: var(--surface-strong-l);
     --line: var(--line-l);
     --fg: var(--fg-l);
     --muted: var(--muted-l);
     --subtle: var(--subtle-l);
     --accent: var(--accent-l);
-    --accent-2: var(--accent-2-l);
-    --accent-soft: var(--accent-soft-l);
+    --t-blue: var(--t-blue-l);
+    --t-mint: var(--t-mint-l);
+    --t-peach: var(--t-peach-l);
+    --t-lavender: var(--t-lavender-l);
+    --t-butter: var(--t-butter-l);
+    --t-rose: var(--t-rose-l);
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: var(--bg-d);
       --surface: var(--surface-d);
-      --surface-strong: var(--surface-strong-d);
       --line: var(--line-d);
       --fg: var(--fg-d);
       --muted: var(--muted-d);
       --subtle: var(--subtle-d);
       --accent: var(--accent-d);
-      --accent-2: var(--accent-2-d);
-      --accent-soft: var(--accent-soft-d);
+      --t-blue: var(--t-blue-d);
+      --t-mint: var(--t-mint-d);
+      --t-peach: var(--t-peach-d);
+      --t-lavender: var(--t-lavender-d);
+      --t-butter: var(--t-butter-d);
+      --t-rose: var(--t-rose-d);
     }
   }
 }
 
-/* Expose tokens as Tailwind utilities (bg-bg, text-muted, border-line …) */
+:root[data-theme='dark'] {
+  --shadow-tile: 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-tile-hover: 0 0 0 1px rgb(255 255 255 / 0.12), 0 22px 44px -18px rgb(0 0 0 / 0.6);
+}
+
+/* Expose tokens as Tailwind utilities (bg-surface, text-muted, bg-t-mint …) */
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
-  --color-surface-strong: var(--surface-strong);
   --color-line: var(--line);
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-subtle: var(--subtle);
   --color-accent: var(--accent);
-  --color-accent-2: var(--accent-2);
-  --color-accent-soft: var(--accent-soft);
+  --color-t-blue: var(--t-blue);
+  --color-t-mint: var(--t-mint);
+  --color-t-peach: var(--t-peach);
+  --color-t-lavender: var(--t-lavender);
+  --color-t-butter: var(--t-butter);
+  --color-t-rose: var(--t-rose);
 }
 
 @theme {
-  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
-    'Noto Sans KR', sans-serif;
-  --font-heading: 'Space Grotesk', 'Pretendard Variable', Pretendard, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* SF Pro on Apple devices; Pretendard covers Hangul everywhere else. */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Pretendard Variable', Pretendard,
+    'Apple SD Gothic Neo', system-ui, 'Noto Sans KR', sans-serif;
 }
 
 /* ------------------------------------------------------------------
@@ -110,7 +135,7 @@
     color: var(--fg);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 4rem;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -119,21 +144,20 @@
     }
   }
 
+  body {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    letter-spacing: -0.01em;
+  }
+
   ::selection {
-    background-color: var(--accent-soft);
-    color: var(--fg);
+    background-color: color-mix(in oklab, var(--accent) 22%, transparent);
   }
 
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
-    border-radius: 6px;
-  }
-
-  /* Long Korean words should break naturally */
-  body {
-    word-break: keep-all;
-    overflow-wrap: anywhere;
+    border-radius: 10px;
   }
 }
 
@@ -141,52 +165,141 @@
  * Components
  * ------------------------------------------------------------------ */
 @layer components {
-  /* Frosted panel used for every top-level section */
-  .glass {
+  /* Bento tile */
+  .tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
     background-color: var(--surface);
-    border: 1px solid var(--line);
-    backdrop-filter: blur(14px) saturate(1.2);
-    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: var(--shadow-tile);
+  }
+  .tile-hover {
+    transition:
+      transform 400ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @media (hover: hover) {
+    .tile-hover:hover {
+      transform: scale(1.015);
+      box-shadow: var(--shadow-tile-hover);
+    }
   }
 
-  .tag {
+  /* Apple-style section headline: bold lead + muted continuation */
+  .headline {
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+  }
+
+  .eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--subtle);
+  }
+
+  .btn-primary {
     display: inline-flex;
     align-items: center;
-    border-radius: 0.375rem;
-    border: 1px solid var(--line);
-    background-color: color-mix(in oklab, var(--fg) 4%, transparent);
-    padding: 0.125rem 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 11px;
+    gap: 0.4rem;
+    border-radius: 999px;
+    background-color: var(--accent);
+    color: #fff;
+    padding: 0.7rem 1.35rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition:
+      filter 200ms,
+      transform 200ms;
+  }
+  .btn-primary:hover {
+    filter: brightness(1.08);
+  }
+  .btn-primary:active {
+    transform: scale(0.97);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    background-color: color-mix(in oklab, var(--fg) 7%, transparent);
+    color: var(--fg);
+    padding: 0.7rem 1.35rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition:
+      background-color 200ms,
+      transform 200ms;
+  }
+  .btn-secondary:hover {
+    background-color: color-mix(in oklab, var(--fg) 11%, transparent);
+  }
+  .btn-secondary:active {
+    transform: scale(0.97);
+  }
+
+  .link-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    color: var(--accent);
+    font-size: 0.9375rem;
+  }
+  .link-more:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background-color: color-mix(in oklab, var(--fg) 6%, transparent);
+    padding: 0.2rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 500;
     color: var(--muted);
   }
 
-  .hero-gradient {
-    background-image: linear-gradient(120deg, var(--fg) 20%, var(--accent) 60%, var(--accent-2) 95%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
+  /* Pinterest-style masonry: CSS columns today, native grid-lanes when available */
+  .masonry {
+    columns: 1;
+    column-gap: 1.25rem;
   }
-
-  /* Lift-on-hover card */
-  .lift {
-    transition:
-      transform 300ms ease,
-      box-shadow 300ms ease,
-      border-color 300ms ease,
-      background-color 300ms ease;
+  .masonry > * {
+    break-inside: avoid;
+    margin-block-end: 1.75rem;
   }
-  .lift:hover {
-    transform: translateY(-3px);
-    border-color: color-mix(in oklab, var(--accent) 35%, transparent);
-    background-color: var(--surface-strong);
-    box-shadow: 0 18px 40px -18px color-mix(in oklab, var(--accent) 35%, transparent);
+  @media (min-width: 640px) {
+    .masonry {
+      columns: 2;
+    }
+  }
+  @media (min-width: 1024px) {
+    .masonry {
+      columns: 3;
+    }
+  }
+  @supports (display: grid-lanes) {
+    .masonry {
+      display: grid-lanes;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+      gap: 1.75rem 1.25rem;
+      columns: unset;
+    }
+    .masonry > * {
+      margin-block-end: 0;
+    }
   }
 
   /* Rendered markdown on project detail pages */
   .prose-body {
     color: var(--muted);
-    line-height: 1.85;
+    font-size: 1.0625rem;
+    line-height: 1.8;
   }
   .prose-body > * + * {
     margin-top: 1.1em;
@@ -195,14 +308,15 @@
     margin-top: 0;
   }
   .prose-body h2 {
-    margin-top: 2.2em;
-    font-family: var(--font-heading);
-    font-size: 1.35rem;
-    font-weight: 600;
+    margin-top: 2em;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--fg);
   }
   .prose-body h3 {
-    margin-top: 1.8em;
+    margin-top: 1.6em;
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--fg);
   }
@@ -219,24 +333,26 @@
   }
   .prose-body a {
     color: var(--accent);
+  }
+  .prose-body a:hover {
     text-decoration: underline;
-    text-underline-offset: 3px;
   }
   .prose-body strong {
     color: var(--fg);
+    font-weight: 600;
   }
   .prose-body code {
-    font-family: var(--font-mono);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.85em;
-    padding: 0.1em 0.35em;
-    border-radius: 0.3rem;
-    background-color: color-mix(in oklab, var(--fg) 7%, transparent);
+    padding: 0.12em 0.4em;
+    border-radius: 0.4rem;
+    background-color: color-mix(in oklab, var(--fg) 6%, transparent);
   }
   .prose-body pre {
     color-scheme: dark;
     overflow-x: auto;
     padding: 1rem 1.25rem;
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     font-size: 0.85rem;
   }
   .prose-body pre code {
@@ -244,19 +360,20 @@
     padding: 0;
   }
   .prose-body blockquote {
-    border-left: 3px solid var(--accent);
-    padding-left: 1rem;
-    color: var(--muted);
+    border-radius: 1rem;
+    background-color: var(--t-butter);
+    padding: 0.9rem 1.1rem;
+    color: var(--fg);
   }
   .prose-body table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
   .prose-body th,
   .prose-body td {
     border-bottom: 1px solid var(--line);
-    padding: 0.6rem 0.75rem;
+    padding: 0.65rem 0.75rem;
     text-align: left;
   }
   .prose-body th {
@@ -266,33 +383,31 @@
 }
 
 /* ------------------------------------------------------------------
- * Scroll-reveal (decorative → progressive enhancement, no JS fallback)
+ * Motion (progressive enhancement, honours reduced-motion)
  * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
   @supports ((animation-timeline: view()) and (animation-range: entry)) {
     @keyframes reveal-in {
       from {
         opacity: 0;
-        transform: translateY(28px) scale(0.985);
+        transform: translateY(32px) scale(0.98);
       }
     }
-
     [data-reveal] {
-      animation: reveal-in auto ease-out backwards;
+      animation: reveal-in auto cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
       animation-timeline: view();
-      animation-range: entry 0% entry 60%;
+      animation-range: entry 0% entry 55%;
     }
   }
 
-  /* One-shot entrance for above-the-fold hero content */
   @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(14px);
+      transform: translateY(16px) scale(0.985);
     }
   }
   [data-rise] {
-    animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
-    animation-delay: calc(var(--i, 0) * 90ms);
+    animation: rise 800ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 70ms);
   }
 }
