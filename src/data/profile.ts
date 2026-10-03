@@ -20,6 +20,8 @@ export const profile = {
     '삼성전자에서 8년 넘게 임베디드 시스템과 Android/Linux를 다뤄 온 시스템 소프트웨어 엔지니어입니다. 퇴근 후에는 Gemini 기반 AI 에이전트부터 실시간 웹 파티 게임까지, 기획에서 배포까지 직접 만듭니다.',
   location: 'Seoul, KR',
   timezone: 'Asia/Seoul',
+  /** 지금 만드는 중 아래 최근 관심사 */
+  recentInterest: 'Paperclip, multica를 이용한 Agent 구조화',
   /** 프로필 사진: src/assets/profile/avatar-3d.jpg(기본), avatar-photo.jpg(클릭하면 전환) */
 
   /** 공개해도 되는 연락처만 남겨 주세요. 비워두면 표시되지 않습니다. */

@@ -27,14 +27,16 @@ Update this file whenever a decision is made or a step is committed.
 
 | 2026-10-04 | **User picks:** About under GitHub/LinkedIn in the sidebar, LinkedIn content in About, photo ⑨ (3D) with click → ③ (real), job in About, push | Done, pushed |
 | 2026-10-04 | Drop education/language from About; all project covers redone in dark Apple product style (graphite + emerald, one object, no text); **AI Star Chaser** added (featured #2, Portfolio Site moved off the home grid); catchphrase header (`Hero.astro`) with 5 candidates, hidden until picked | Done |
+| 2026-10-04 | **Catchphrase selected:** `Slow is Fast in AI — Just Do AI.` | Done, pushed |
+| 2026-10-04 | Added recent interest (`최근 관심사 Paperclip, multica를 이용한 Agent 구조화.`) right below now-building bar | Done, pushed |
 
 ## A안 structure (as built)
 
 - Desktop: fixed left sidebar (`Sidebar.astro` → `ProfileCard.astro`, GitHub/LinkedIn → `AboutCard.astro` → scrollspy nav (Experience/Projects/Contact), theme toggle) and a scrolling right column.
 - Avatar (`Avatar.astro`): ⑨ 3D on the front, ③ real photo on the back. Clicking the profile avatar sets `html[data-avatar="photo"]`, which flips every avatar on the page (sidebar, mobile card, top bar, Ask AI).
-- About content comes from the public LinkedIn profile: System Software Engineer @ Samsung Electronics, embedded systems · Android/Linux, 8+ years, Dankook Univ. (2011–2018), JLPT N2, OPIc Chinese IM2. The full LinkedIn summary is cut off at "Android/Linux…" for logged-out visitors, so only that part is used.
+- About content comes from the public LinkedIn profile: System Software Engineer @ Samsung Electronics, embedded systems · Android/Linux, 8+ years. (Education & languages removed per request).
 - Mobile: the sidebar collapses into a top bar plus a profile card (profile + About, `#about`) at the top of the home page. The mobile menu adds an About link.
-- Right column order: (catchphrase header, once chosen) → **Now strip** (`NowStrip.astro`: now building + local time + stack marquee) → Experience (`ExperienceList.astro`) → Projects (`ProjectCard.astro`) → Contact.
+- Right column order: Catchphrase Hero (`Slow is Fast in AI — Just Do AI.`) → **Now strip** (`NowStrip.astro`: now building + local time + recent interest + stack marquee) → Experience (`ExperienceList.astro`) → Projects (`ProjectCard.astro`) → Contact.
 - `AskAI.astro`: bottom-right "Ask AI" button opening a `<dialog>`. It answers only from prepared Q&A in `profile.ts`, with no server or API key, because GitHub Pages is static.
 - Tokens: dark-first zinc (`#09090b`) + emerald accent, light theme kept.
 - Companies are shown as initial badges (S / N / A) instead of logos to avoid trademark use.

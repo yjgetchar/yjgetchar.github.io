@@ -14,30 +14,44 @@ const { now } = Astro.props;
 ---
 
 <section aria-label="지금 하고 있는 일">
-  <!-- Now building + local time -->
+  <!-- Now building + local time + recent interest -->
   <div
-    class="card flex flex-col gap-3 px-5 py-4 text-[14px] sm:flex-row sm:items-center sm:justify-between"
+    class="card flex flex-col gap-3.5 px-5 py-4 text-[14px]"
     data-rise
   >
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {
+        now ? (
+          <a href={`/projects/${now.id}`} class="group inline-flex min-h-6 items-center gap-2.5">
+            <span class="live-dot" aria-hidden="true" />
+            <span class="text-muted">지금 만드는 중</span>
+            <span class="font-semibold group-hover:text-accent">{now.data.title}</span>
+            <Icon name="chevron" class="size-3.5 text-subtle transition-transform group-hover:translate-x-0.5" />
+          </a>
+        ) : (
+          <span class="inline-flex items-center gap-2.5 text-muted">
+            <span class="live-dot" aria-hidden="true" /> 새로운 아이디어를 고민하는 중
+          </span>
+        )
+      }
+      <span class="inline-flex items-center gap-1.5 text-subtle">
+        <span aria-hidden="true">📍</span>
+        {profile.location.split(',')[0]} ·
+        <time class="font-mono tabular-nums" data-clock>--:--</time>
+      </span>
+    </div>
+
     {
-      now ? (
-        <a href={`/projects/${now.id}`} class="group inline-flex min-h-6 items-center gap-2.5">
-          <span class="live-dot" aria-hidden="true" />
-          <span class="text-muted">지금 만드는 중</span>
-          <span class="font-semibold group-hover:text-accent">{now.data.title}</span>
-          <Icon name="chevron" class="size-3.5 text-subtle transition-transform group-hover:translate-x-0.5" />
-        </a>
-      ) : (
-        <span class="inline-flex items-center gap-2.5 text-muted">
-          <span class="live-dot" aria-hidden="true" /> 새로운 아이디어를 고민하는 중
-        </span>
+      profile.recentInterest && (
+        <div class="flex flex-wrap items-center gap-2 border-t border-line/60 pt-3 text-[13px]">
+          <span class="inline-flex items-center gap-1.5 text-subtle font-medium">
+            <span class="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+            최근 관심사
+          </span>
+          <span class="text-fg/90">{profile.recentInterest}</span>
+        </div>
       )
     }
-    <span class="inline-flex items-center gap-1.5 text-subtle">
-      <span aria-hidden="true">📍</span>
-      {profile.location.split(',')[0]} ·
-      <time class="font-mono tabular-nums" data-clock>--:--</time>
-    </span>
   </div>
 
   <!-- Stack marquee (duplicated list for a seamless loop; the copy is hidden from AT) -->
