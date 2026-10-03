@@ -26,7 +26,7 @@ export const profile = {
   email: '', // TODO: 예) 'hello@example.com'
   socials: [
     { label: 'GitHub', href: 'https://github.com/yjgetchar', icon: 'github' },
-    // { label: 'LinkedIn', href: 'https://linkedin.com/in/...', icon: 'linkedin' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/younjae-lee', icon: 'linkedin' },
     // { label: 'Blog', href: 'https://....tistory.com', icon: 'blog' },
   ] as const,
 } as const;
@@ -57,30 +57,30 @@ export const expertise: { emoji: string; title: string; body: string; tags: stri
 ];
 
 /** 걸어온 길 */
-export const timeline = [
-  // TODO: 실제 경력·학력으로 교체
+export const timeline: { period: string; title: string; org: string; body: string; kind: 'work' | 'edu' }[] = [
+  // TODO: 직무명·담당 업무(body)와 학력을 채우면 더 좋아요
   {
-    period: '2026 — 현재',
-    title: 'Independent Developer',
-    org: 'Side Projects',
-    body: 'AI 에이전트, 콘텐츠 자동화, 웹 파티 게임 등 개인 프로젝트를 기획·개발·운영.',
+    period: '2018.08 — 현재',
+    title: 'Samsung Electronics',
+    org: '재직 중',
+    body: '',
     kind: 'work',
   },
   {
-    period: '20XX — 20XX',
-    title: '직무 / 포지션',
-    org: '회사 이름',
-    body: '담당 업무와 주요 성과를 한두 줄로 적어 주세요.',
+    period: '2018.05 — 2018.06',
+    title: 'Naver Business Platform',
+    org: 'Intern',
+    body: '',
     kind: 'work',
   },
   {
-    period: '20XX — 20XX',
-    title: '전공 / 학위',
-    org: '학교 이름',
-    body: '관련 활동이나 수상 내역이 있다면 함께 적어 주세요.',
-    kind: 'edu',
+    period: '2017.12 — 2018.05',
+    title: 'AhnLab',
+    org: 'Intern',
+    body: '',
+    kind: 'work',
   },
-] as const;
+];
 
 /** 기술 스택 (벤토 마키 + 별자리 위젯) */
 export const stack = [

@@ -12,7 +12,7 @@ import { timeline } from '../data/profile';
             {item.title}
             <span class:list={['chip', item.kind === 'edu' ? 'bg-t-lavender' : 'bg-t-blue']}>{item.org}</span>
           </h3>
-          <p class="mt-1.5 text-[15px] leading-relaxed text-muted">{item.body}</p>
+          {item.body && <p class="mt-1.5 text-[15px] leading-relaxed text-muted">{item.body}</p>}
         </div>
       </li>
     ))

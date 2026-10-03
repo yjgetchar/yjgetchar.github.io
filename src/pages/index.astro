@@ -13,7 +13,7 @@ import { profile, expertise, sections, tintBg } from '../data/profile';
 const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const featured = all.filter((p) => p.data.featured);
 const now = all.find((p) => p.data.status === 'In Progress') ?? all[0];
-const contactHref = profile.email ? `mailto:${profile.email}` : `https://github.com/${profile.github}`;
+const contactHref = profile.email ? `mailto:${profile.email}` : 'https://www.linkedin.com/in/younjae-lee';
 ---
 
 <BaseLayout structuredData>
@@ -36,9 +36,13 @@ const contactHref = profile.email ? `mailto:${profile.email}` : `https://github.
         </div>
         <div class="mt-7 flex flex-wrap gap-2.5">
           <a href="/projects" class="btn-primary">프로젝트 보기 <Icon name="chevron" class="size-4" /></a>
-          <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener" class="btn-secondary">
-            <Icon name="github" class="size-4" /> GitHub
-          </a>
+          {
+            profile.socials.map((s) => (
+              <a href={s.href} target="_blank" rel="noopener" class="btn-secondary">
+                <Icon name={s.icon} class="size-4" /> {s.label}
+              </a>
+            ))
+          }
         </div>
       </div>
 
@@ -225,12 +229,12 @@ const contactHref = profile.email ? `mailto:${profile.email}` : `https://github.
                   <Icon name="mail" class="size-4" /> {profile.email}
                 </a>
               ) : (
-                <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener" class="btn-primary">
-                  <Icon name="github" class="size-4" /> GitHub에서 연락하기
+                <a href="https://www.linkedin.com/in/younjae-lee" target="_blank" rel="noopener" class="btn-primary">
+                  <Icon name="linkedin" class="size-4" /> LinkedIn으로 연락하기
                 </a>
               )}
-              <a href="/about" class="btn-secondary">
-                소개 보기
+              <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener" class="btn-secondary">
+                <Icon name="github" class="size-4" /> GitHub
               </a>
             </div>
           </div>
