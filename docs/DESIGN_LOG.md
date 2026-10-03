@@ -23,6 +23,7 @@ Update this file whenever a decision is made or a step is committed.
 | 2026-10-04 | 10 profile photo styles generated from the ID photo | Done, waiting for the user's pick |
 | 2026-10-04 | 5 samples for the section above Experience | Done, waiting for the user's pick |
 | 2026-10-04 | A안 implemented with defaults (photo ④, section ① + ⑤ marquee) | Committed `441f385`, **not pushed** |
+| 2026-10-04 | Design log + README update; photos/samples gathered into one review page (`walkthrough.md` in session `6529afc1…`) | Committed `b1d9016`+, **not pushed** |
 
 ## A안 structure (as built)
 
