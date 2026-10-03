@@ -54,8 +54,6 @@ export const aboutFacts: { label: string; value: string }[] = [
   { label: '직무', value: 'System Software Engineer · Samsung Electronics' },
   { label: '분야', value: 'Embedded Systems · Android/Linux' },
   { label: '경력', value: '8년+ (2018.08 – 현재)' },
-  { label: '학력', value: '단국대학교 (2011 – 2018)' },
-  { label: '어학', value: 'JLPT N2 · OPIc 중국어 IM2' },
 ];
 
 /** Experience — 회사 로고 대신 이니셜 배지로 표시합니다. */
