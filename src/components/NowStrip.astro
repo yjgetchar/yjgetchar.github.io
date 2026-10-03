@@ -1,12 +1,11 @@
 ---
 /**
- * Sits above Experience so the page opens with a person, not a résumé:
- * conversational intro with inline badges → "now building" status → stack marquee.
+ * Opens the right column above Experience: "now building" status + local time,
+ * then the stack marquee. (The About paragraph moved to the sidebar.)
  */
 import type { CollectionEntry } from 'astro:content';
 import Icon from './Icon.astro';
-import SectionTitle from './SectionTitle.astro';
-import { about, stack, profile } from '../data/profile';
+import { stack, profile } from '../data/profile';
 
 interface Props {
   now?: CollectionEntry<'projects'>;
@@ -14,29 +13,11 @@ interface Props {
 const { now } = Astro.props;
 ---
 
-<section id="about" aria-labelledby="h-about" class="scroll-mt-20">
-  <SectionTitle id="h-about" title="About" href="/about" linkLabel="자세히" />
-
-  <p class="text-[19px] leading-[1.75] text-muted sm:text-[21px]" data-rise>
-    {
-      about.map((part) =>
-        typeof part === 'string' ? (
-          part
-        ) : (
-          <span class="badge">
-            <span aria-hidden="true">{part.emoji}</span>
-            {part.badge}
-          </span>
-        ),
-      )
-    }
-  </p>
-
+<section aria-label="지금 하고 있는 일">
   <!-- Now building + local time -->
   <div
-    class="card mt-6 flex flex-col gap-3 px-5 py-4 text-[14px] sm:flex-row sm:items-center sm:justify-between"
+    class="card flex flex-col gap-3 px-5 py-4 text-[14px] sm:flex-row sm:items-center sm:justify-between"
     data-rise
-    style="--i:1"
   >
     {
       now ? (
@@ -60,7 +41,7 @@ const { now } = Astro.props;
   </div>
 
   <!-- Stack marquee (duplicated list for a seamless loop; the copy is hidden from AT) -->
-  <div class="marquee mt-4" data-rise style="--i:2">
+  <div class="marquee mt-4" data-rise style="--i:1">
     <ul class="marquee-track" aria-label="자주 쓰는 기술">
       {stack.map((s) => <li class="chip shrink-0 px-3 py-1.5 text-[13px]">{s}</li>)}
       {

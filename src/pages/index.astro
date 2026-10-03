@@ -2,7 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProfileCard from '../components/ProfileCard.astro';
-import AboutIntro from '../components/AboutIntro.astro';
+import AboutCard from '../components/AboutCard.astro';
+import NowStrip from '../components/NowStrip.astro';
 import ExperienceList from '../components/ExperienceList.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import ProjectCard from '../components/ProjectCard.astro';
@@ -17,13 +18,20 @@ const now = all.find((p) => p.data.status === 'In Progress');
 <BaseLayout structuredData>
   <h1 class="sr-only">{profile.name} — {profile.role}</h1>
 
-  <!-- Mobile only: the sidebar profile becomes the first card -->
+  <!-- Mobile only: the sidebar (profile + About) becomes the first card -->
   <div class="card mb-14 px-6 py-8 lg:hidden" data-rise>
     <ProfileCard eager />
+    {
+      sections.about && (
+        <div class="mt-8 border-t border-line pt-7">
+          <AboutCard id="about" />
+        </div>
+      )
+    }
   </div>
 
   <div class="flex flex-col gap-20 sm:gap-24">
-    {sections.about && <AboutIntro now={now} />}
+    <NowStrip now={now} />
 
     {
       sections.experience && (

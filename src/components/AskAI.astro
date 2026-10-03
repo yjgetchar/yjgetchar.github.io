@@ -8,9 +8,8 @@
  * To plug in a real LLM later, replace `route()` with a fetch to a serverless proxy.
  */
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
-import avatar from '../assets/profile/avatar.jpg';
+import Avatar from './Avatar.astro';
 import { experience, linkedin, profile, stack } from '../data/profile';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -39,7 +38,7 @@ const suggestions = [
   <div class="flex h-full flex-col">
     <!-- Header -->
     <div class="flex items-center gap-3 border-b border-line px-5 py-4">
-      <Image src={avatar} alt="" width={36} height={36} densities={[1, 2]} class="size-9 rounded-full object-cover" />
+      <Avatar size={36} class="size-9" />
       <div class="min-w-0 flex-1">
         <h2 id="ask-ai-title" class="text-[15px] font-semibold tracking-tight">윤재의 AI 도우미</h2>
         <p class="text-[12px] text-subtle">미리 준비한 답변으로 동작해요 · Beta</p>

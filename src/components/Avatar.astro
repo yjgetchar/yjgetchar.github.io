@@ -1,0 +1,42 @@
+---
+/**
+ * Flip avatar: 3D character on the front, real photo on the back.
+ * Which side shows is controlled globally by html[data-avatar="photo"]
+ * (toggled by the button in ProfileCard), so every avatar flips together.
+ */
+import { Image } from 'astro:assets';
+import avatar3d from '../assets/profile/avatar-3d.jpg';
+import avatarPhoto from '../assets/profile/avatar-photo.jpg';
+
+interface Props {
+  /** Rendered pixel size (CSS size comes from `class`) */
+  size: number;
+  class?: string;
+  eager?: boolean;
+}
+const { size, class: cls = '', eager = false } = Astro.props;
+---
+
+<span class:list={['avatar', cls]} aria-hidden="true">
+  <span class="avatar-inner">
+    <Image
+      src={avatar3d}
+      alt=""
+      width={size}
+      height={size}
+      densities={[1, 2]}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+      class="avatar-face"
+    />
+    <Image
+      src={avatarPhoto}
+      alt=""
+      width={size}
+      height={size}
+      densities={[1, 2]}
+      loading="lazy"
+      class="avatar-face avatar-back"
+    />
+  </span>
+</span>

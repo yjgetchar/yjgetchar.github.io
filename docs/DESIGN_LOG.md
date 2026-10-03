@@ -25,28 +25,32 @@ Update this file whenever a decision is made or a step is committed.
 | 2026-10-04 | A안 implemented with defaults (photo ④, section ① + ⑤ marquee) | Committed `441f385`, **not pushed** |
 | 2026-10-04 | Design log + README update; photos/samples gathered into one review page (`walkthrough.md` in session `6529afc1…`) | Committed `b1d9016`+, **not pushed** |
 
+| 2026-10-04 | **User picks:** About under GitHub/LinkedIn in the sidebar, LinkedIn content in About, photo ⑨ (3D) with click → ③ (real), job in About, push | Done, pushed |
+
 ## A안 structure (as built)
 
-- Desktop: fixed left sidebar (`Sidebar.astro` → `ProfileCard.astro`, GitHub/LinkedIn, scrollspy nav, theme toggle) and a scrolling right column.
-- Mobile: the sidebar collapses into a top bar plus a profile card at the top of the home page.
-- Right column order: **About intro** (`AboutIntro.astro`) → Experience (`ExperienceList.astro`) → Projects (`ProjectCard.astro`) → Contact.
+- Desktop: fixed left sidebar (`Sidebar.astro` → `ProfileCard.astro`, GitHub/LinkedIn → `AboutCard.astro` → scrollspy nav (Experience/Projects/Contact), theme toggle) and a scrolling right column.
+- Avatar (`Avatar.astro`): ⑨ 3D on the front, ③ real photo on the back. Clicking the profile avatar sets `html[data-avatar="photo"]`, which flips every avatar on the page (sidebar, mobile card, top bar, Ask AI).
+- About content comes from the public LinkedIn profile: System Software Engineer @ Samsung Electronics, embedded systems · Android/Linux, 8+ years, Dankook Univ. (2011–2018), JLPT N2, OPIc Chinese IM2. The full LinkedIn summary is cut off at "Android/Linux…" for logged-out visitors, so only that part is used.
+- Mobile: the sidebar collapses into a top bar plus a profile card (profile + About, `#about`) at the top of the home page. The mobile menu adds an About link.
+- Right column order: **Now strip** (`NowStrip.astro`: now building + local time + stack marquee) → Experience (`ExperienceList.astro`) → Projects (`ProjectCard.astro`) → Contact.
 - `AskAI.astro`: bottom-right "Ask AI" button opening a `<dialog>`. It answers only from prepared Q&A in `profile.ts`, with no server or API key, because GitHub Pages is static.
 - Tokens: dark-first zinc (`#09090b`) + emerald accent, light theme kept.
 - Companies are shown as initial badges (S / N / A) instead of logos to avoid trademark use.
 
 ## Open decisions
 
-1. **Profile photo** (①–⑩). Current default: ④ Emerald Glow.
+1. ~~**Profile photo**~~ Decided: ⑨ 3D, click → ③ Dark Rim-light.
    - Source: `~/Downloads/이윤재(3x4).jpg`. LinkedIn blocked automated access (HTTP 999), so the LinkedIn photo itself was not used.
    - ① Studio Gray · ② Smart Casual · ③ Dark Rim-light · ④ Emerald Glow · ⑤ Seoul Outdoor · ⑥ Tech Office · ⑦ B&W Editorial · ⑧ Pastel Minimal · ⑨ 3D Avatar · ⑩ Vector Illustration
    - To swap: replace `src/assets/profile/avatar.jpg` with the chosen image (square crop, ~512px), then build.
-2. **Section above Experience** (①–⑤, can be mixed). Current default: ① + the stack marquee from ⑤.
+2. **Section above Experience**: About moved to the sidebar; the right column keeps the now-building bar + stack marquee. Other samples (②–⑤) still available.
    - ① About + Now (kroszborg): conversational intro with inline badges + "now building" status bar
    - ② At a glance: number cards + GitHub contribution graph
    - ③ AI code card + question box (AI IDE feel; overlaps with the Ask AI button)
    - ④ Big headline + featured project (konpo / attiq)
    - ⑤ What I do cards + tech stack marquee (refact0r)
-3. Samsung Electronics role line (only what is OK to make public). Currently company name and dates only.
+3. ~~Samsung role~~ Decided: System Software Engineer (from LinkedIn). Location: LinkedIn says Yongin, the site still says Seoul. Confirm.
 4. Contact email (currently LinkedIn only) and site language (KO / EN / both).
 
 ## Where the images are
@@ -58,4 +62,4 @@ The generated images live outside the repo (they include the user's face, and th
 
 ## Deploy note
 
-Pushing `main` triggers the GitHub Pages deploy. The A안 commit is held locally until the photo is chosen.
+Pushing `main` triggers the GitHub Pages deploy.

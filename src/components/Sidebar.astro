@@ -4,11 +4,11 @@
  *  - Desktop (lg+): sticky left sidebar with profile, scrollspy nav and theme toggle.
  *  - Mobile: slim sticky top bar with a popover menu.
  */
-import { Image } from 'astro:assets';
+import Avatar from './Avatar.astro';
 import Icon from './Icon.astro';
 import ProfileCard from './ProfileCard.astro';
-import avatar from '../assets/profile/avatar.jpg';
-import { nav, profile } from '../data/profile';
+import AboutCard from './AboutCard.astro';
+import { nav, profile, sections } from '../data/profile';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = path === '/';
@@ -18,6 +18,8 @@ const pages = [
   { label: '자세한 소개', href: '/about' },
 ];
 const isActivePage = (href: string) => path === href || path.startsWith(`${href}/`);
+/** Mobile menu: About sits in the profile card at the top of the home page */
+const mobileSections = [...(sections.about ? [{ label: 'About', id: 'about' }] : []), ...nav];
 ---
 
 <!-- ───────── Desktop sidebar ───────── -->
@@ -27,7 +29,15 @@ const isActivePage = (href: string) => path === href || path.startsWith(`${href}
 >
   <ProfileCard eager />
 
-  <nav class="spy-nav mt-10" aria-label="섹션 메뉴" data-spy={isHome ? '' : undefined}>
+  {
+    sections.about && (
+      <div class="mt-8 border-t border-line pt-8">
+        <AboutCard />
+      </div>
+    )
+  }
+
+  <nav class="spy-nav mt-8" aria-label="섹션 메뉴" data-spy={isHome ? '' : undefined}>
     <ul class="flex flex-col gap-1">
       {
         nav.map((n) => (
@@ -85,7 +95,7 @@ const isActivePage = (href: string) => path === href || path.startsWith(`${href}
 <header class="sticky top-0 z-50 -mx-4 border-b border-line bg-bg/80 px-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:hidden">
   <div class="flex h-14 items-center justify-between">
     <a href="/" class="inline-flex min-h-11 items-center gap-2.5 text-[15px] font-semibold tracking-tight">
-      <Image src={avatar} alt="" width={28} height={28} densities={[1, 2]} class="size-7 rounded-full object-cover" />
+      <Avatar size={28} class="size-7" />
       {profile.name}
     </a>
     <div class="flex items-center gap-1">
@@ -113,7 +123,7 @@ const isActivePage = (href: string) => path === href || path.startsWith(`${href}
   <div id="mobile-menu" popover class="mobile-menu card p-2 lg:hidden">
     <ul class="flex flex-col">
       {
-        [...nav.map((n) => ({ label: n.label, href: sectionHref(n.id) })), ...pages].map((item) => (
+        [...mobileSections.map((n) => ({ label: n.label, href: sectionHref(n.id) })), ...pages].map((item) => (
           <li>
             <a
               href={item.href}

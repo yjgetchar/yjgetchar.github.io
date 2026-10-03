@@ -1,0 +1,59 @@
+---
+/**
+ * About block that sits under the GitHub / LinkedIn buttons
+ * (desktop sidebar, and the profile card at the top of the mobile home page).
+ * Paragraph with inline badges + a short fact list taken from the public LinkedIn profile.
+ */
+import Icon from './Icon.astro';
+import { about, aboutFacts, linkedin } from '../data/profile';
+
+interface Props {
+  /** Only the mobile instance gets the #about anchor, so ids stay unique */
+  id?: string;
+}
+const { id } = Astro.props;
+const headingId = id ? `h-${id}` : undefined;
+---
+
+<section id={id} aria-labelledby={headingId} class="scroll-mt-20 text-left">
+  <h2 id={headingId} class="text-[12px] font-semibold tracking-[0.14em] text-subtle uppercase">About</h2>
+
+  <p class="about-text mt-3 text-[15px] leading-[1.85] text-muted">
+    {
+      about.map((part) =>
+        typeof part === 'string' ? (
+          part
+        ) : (
+          <span class="badge">
+            <span aria-hidden="true">{part.emoji}</span>
+            {part.badge}
+          </span>
+        ),
+      )
+    }
+  </p>
+
+  <dl class="mt-5 flex flex-col gap-2 text-[13px] leading-snug">
+    {
+      aboutFacts.map((f) => (
+        <div class="grid grid-cols-[2.75rem_1fr] gap-3">
+          <dt class="text-subtle">{f.label}</dt>
+          <dd class="text-fg/85">{f.value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <a href={linkedin} target="_blank" rel="noopener" class="link-more mt-4 min-h-9">
+    LinkedIn에서 자세히 보기 <Icon name="chevron" class="size-3.5" />
+  </a>
+</section>
+
+<style>
+  /* Badges are tuned for the old 21px paragraph; keep them snug at sidebar size */
+  .about-text :global(.badge) {
+    padding: 0 0.45em;
+    border-radius: 0.5em;
+    font-size: 0.93em;
+  }
+</style>

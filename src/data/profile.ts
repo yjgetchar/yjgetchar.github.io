@@ -11,15 +11,16 @@ export const profile = {
 
   name: 'Younjae Lee',
   koreanName: '이윤재',
-  role: 'AI Automation & Product Developer', // TODO
+  /** LinkedIn 직무 */
+  role: 'System Software Engineer',
   /** 사이드바 이름 아래 한 줄 소개 */
   tagline: 'AI로 반복을 줄이고, 함께 즐길 수 있는 제품을 만듭니다.', // TODO
   /** SEO description · 소개 페이지 첫 문단 */
   intro:
-    'Gemini 기반 AI 에이전트부터 실시간 웹 파티 게임까지, 기획에서 배포까지 직접 만듭니다. 반복되는 일은 자동화하고, 사람들이 함께 즐길 수 있는 경험을 만드는 데 관심이 많아요.', // TODO
+    '삼성전자에서 8년 넘게 임베디드 시스템과 Android/Linux를 다뤄 온 시스템 소프트웨어 엔지니어입니다. 퇴근 후에는 Gemini 기반 AI 에이전트부터 실시간 웹 파티 게임까지, 기획에서 배포까지 직접 만듭니다.',
   location: 'Seoul, KR',
   timezone: 'Asia/Seoul',
-  /** 프로필 사진은 src/assets/profile/avatar.jpg 파일을 교체하면 됩니다. */
+  /** 프로필 사진: src/assets/profile/avatar-3d.jpg(기본), avatar-photo.jpg(클릭하면 전환) */
 
   /** 공개해도 되는 연락처만 남겨 주세요. 비워두면 표시되지 않습니다. */
   email: '', // TODO: 예) 'hello@example.com'
@@ -33,17 +34,28 @@ export const profile = {
 export const linkedin = profile.socials.find((s) => s.icon === 'linkedin')!.href;
 
 /**
- * About 섹션 문단. 문자열은 그대로, { badge } 항목은 아이콘 배지로 표시됩니다.
+ * About 문단 (사이드바 · 모바일 프로필 카드). 문자열은 그대로, { badge } 항목은 아이콘 배지로 표시됩니다.
  */
 export type AboutPart = string | { badge: string; emoji: string };
 export const about: AboutPart[] = [
   '2018년부터 ',
   { badge: 'Samsung Electronics', emoji: '🏢' },
-  '에서 일하고 있어요. 퇴근 후에는 ',
+  '에서 ',
+  { badge: 'System Software Engineer', emoji: '⚙️' },
+  '로 일하며 임베디드 시스템과 Android/Linux를 다뤄 왔어요. 퇴근 후에는 ',
   { badge: 'AI 에이전트', emoji: '🤖' },
   '와 ',
   { badge: '실시간 웹 게임', emoji: '⚡' },
-  '을 만듭니다. 반복되는 일은 자동화하고, 사람들이 함께 즐길 수 있는 경험을 만드는 걸 좋아해요.',
+  '을 만듭니다.',
+];
+
+/** About 아래 요약 (LinkedIn 공개 프로필 기준) */
+export const aboutFacts: { label: string; value: string }[] = [
+  { label: '직무', value: 'System Software Engineer · Samsung Electronics' },
+  { label: '분야', value: 'Embedded Systems · Android/Linux' },
+  { label: '경력', value: '8년+ (2018.08 – 현재)' },
+  { label: '학력', value: '단국대학교 (2011 – 2018)' },
+  { label: '어학', value: 'JLPT N2 · OPIc 중국어 IM2' },
 ];
 
 /** Experience — 회사 로고 대신 이니셜 배지로 표시합니다. */
@@ -59,8 +71,15 @@ export interface Job {
   body?: string;
 }
 export const experience: Job[] = [
-  // TODO: role / body 에 공개 가능한 직무·담당 업무를 적으면 더 좋아요
-  { company: 'Samsung Electronics', initial: 'S', color: '#1428a0', period: '2018.08 — Present', current: true },
+  {
+    company: 'Samsung Electronics',
+    initial: 'S',
+    color: '#1428a0',
+    role: 'System Software Engineer',
+    period: '2018.08 — Present',
+    current: true,
+    body: '임베디드 시스템과 Android/Linux 기반 시스템 소프트웨어를 개발합니다.',
+  },
   { company: 'Naver Business Platform', initial: 'N', color: '#03c75a', role: 'Intern', period: '2018.05 — 2018.06' },
   { company: 'AhnLab', initial: 'A', color: '#0b6bcb', role: 'Intern', period: '2017.12 — 2018.05' },
 ];
@@ -111,9 +130,8 @@ export const sections = {
   contact: true,
 } as const;
 
-/** 사이드바 내비게이션 — 홈의 섹션 id 와 맞춰 주세요 */
+/** 사이드바 내비게이션 — 홈의 섹션 id 와 맞춰 주세요. About은 사이드바에 항상 보이므로 모바일 메뉴에만 따로 넣습니다. */
 export const nav = [
-  { label: 'About', id: 'about' },
   { label: 'Experience', id: 'experience' },
   { label: 'Projects', id: 'projects' },
   { label: 'Contact', id: 'contact' },
