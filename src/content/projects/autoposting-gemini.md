@@ -7,7 +7,7 @@ tint: rose
 tags: [Python, Gemini, Blogger API, Telegram Bot]
 status: Private
 featured: true
-order: 3
+order: 4
 date: 2026-07-30
 highlights:
   - 용어 박스, 목차, 앵커, 팁 박스가 포함된 HTML 서식 자동 생성
