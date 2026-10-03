@@ -1,0 +1,206 @@
+---
+/**
+ * Concept A navigation.
+ *  - Desktop (lg+): sticky left sidebar with profile, scrollspy nav and theme toggle.
+ *  - Mobile: slim sticky top bar with a popover menu.
+ */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import ProfileCard from './ProfileCard.astro';
+import avatar from '../assets/profile/avatar.jpg';
+import { nav, profile } from '../data/profile';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = path === '/';
+const sectionHref = (id: string) => (isHome ? `#${id}` : `/#${id}`);
+const pages = [
+  { label: '모든 프로젝트', href: '/projects' },
+  { label: '자세한 소개', href: '/about' },
+];
+const isActivePage = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<!-- ───────── Desktop sidebar ───────── -->
+<aside
+  class="sticky top-0 hidden h-dvh flex-col overflow-y-auto py-12 lg:flex"
+  aria-label="프로필과 메뉴"
+>
+  <ProfileCard eager />
+
+  <nav class="spy-nav mt-10" aria-label="섹션 메뉴" data-spy={isHome ? '' : undefined}>
+    <ul class="flex flex-col gap-1">
+      {
+        nav.map((n) => (
+          <li>
+            <a
+              href={sectionHref(n.id)}
+              class="group flex min-h-10 items-center gap-3 text-[14px] text-subtle transition-colors hover:text-fg"
+            >
+              <span
+                class="spy-bar h-px w-4 bg-subtle transition-all duration-300 group-hover:w-8 group-hover:bg-fg"
+                aria-hidden="true"
+              />
+              {n.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <ul class="mt-6 flex flex-col gap-1 border-t border-line pt-6">
+    {
+      pages.map((p) => (
+        <li>
+          <a
+            href={p.href}
+            aria-current={isActivePage(p.href) ? 'page' : undefined}
+            class:list={[
+              'inline-flex min-h-9 items-center gap-1 text-[14px] transition-colors hover:text-fg',
+              isActivePage(p.href) ? 'font-semibold text-fg' : 'text-muted',
+            ]}
+          >
+            {p.label} <Icon name="chevron" class="size-3.5" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="mt-auto flex items-center justify-between pt-10 text-[12px] text-subtle">
+    <span>© {new Date().getFullYear()} {profile.name}</span>
+    <button
+      type="button"
+      data-theme-toggle
+      class="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-line text-muted transition-colors hover:text-fg"
+      aria-label="라이트/다크 모드 전환"
+    >
+      <span class="theme-icon-moon"><Icon name="moon" class="size-[18px]" /></span>
+      <span class="theme-icon-sun"><Icon name="sun" class="size-[18px]" /></span>
+    </button>
+  </div>
+</aside>
+
+<!-- ───────── Mobile top bar ───────── -->
+<header class="sticky top-0 z-50 -mx-4 border-b border-line bg-bg/80 px-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:hidden">
+  <div class="flex h-14 items-center justify-between">
+    <a href="/" class="inline-flex min-h-11 items-center gap-2.5 text-[15px] font-semibold tracking-tight">
+      <Image src={avatar} alt="" width={28} height={28} densities={[1, 2]} class="size-7 rounded-full object-cover" />
+      {profile.name}
+    </a>
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        data-theme-toggle
+        class="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted"
+        aria-label="라이트/다크 모드 전환"
+      >
+        <span class="theme-icon-moon"><Icon name="moon" class="size-5" /></span>
+        <span class="theme-icon-sun"><Icon name="sun" class="size-5" /></span>
+      </button>
+      <button
+        type="button"
+        popovertarget="mobile-menu"
+        class="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted"
+        aria-label="메뉴 열기"
+      >
+        <Icon name="menu" class="size-6" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Popover gives us light-dismiss, Esc-to-close and focus handling for free -->
+  <div id="mobile-menu" popover class="mobile-menu card p-2 lg:hidden">
+    <ul class="flex flex-col">
+      {
+        [...nav.map((n) => ({ label: n.label, href: sectionHref(n.id) })), ...pages].map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="flex min-h-12 items-center rounded-xl px-4 text-[16px] font-medium transition-colors hover:bg-fg/[0.06]"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</header>
+
+<!-- Native scrollspy (Chrome 140+). Kept separate & unprocessed: an unknown pseudo-class only drops this rule. -->
+<style is:inline>
+  .spy-nav a:target-current {
+    color: var(--fg);
+    font-weight: 600;
+  }
+  .spy-nav a:target-current .spy-bar {
+    width: 2rem;
+    background-color: var(--accent-bg);
+  }
+</style>
+
+<style>
+  .mobile-menu {
+    inset: 3.75rem 1rem auto auto;
+    width: min(18rem, calc(100vw - 2rem));
+    margin: 0;
+    box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.5);
+  }
+  .theme-icon-sun {
+    display: none;
+  }
+  :global(html[data-theme='light']) .theme-icon-sun {
+    display: inline-flex;
+  }
+  :global(html[data-theme='light']) .theme-icon-moon {
+    display: none;
+  }
+</style>
+
+<script>
+  // ── Theme: dark by default, the toggle pins the choice ──
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]');
+  document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+      document.documentElement.dataset.theme = next;
+      if (meta) meta.content = next;
+      localStorage.setItem('color-scheme', next);
+    });
+  });
+
+  // ── Close the mobile menu after picking a link ──
+  const menu = document.getElementById('mobile-menu');
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.hidePopover()));
+
+  // ── Scrollspy (home only): native :target-current, IntersectionObserver fallback ──
+  const spy = document.querySelector<HTMLElement>('[data-spy]');
+  if (spy) {
+    const links = [...spy.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const setCurrent = (current: Element | null) =>
+      links.forEach((l) => (l === current ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current')));
+
+    if (CSS.supports('scroll-target-group: auto')) {
+      const sync = () => setCurrent(spy.querySelector('a:target-current'));
+      sync();
+      document.addEventListener('scrollend', sync);
+    } else {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const link = links.find((l) => l.hash === `#${entry.target.id}`) ?? null;
+            links.forEach((l) => l.classList.toggle('is-current', l === link));
+            setCurrent(link);
+          }
+        },
+        { rootMargin: '-45% 0px -50% 0px' },
+      );
+      links.forEach((l) => {
+        const section = document.getElementById(l.hash.slice(1));
+        if (section) observer.observe(section);
+      });
+    }
+  }
+</script>

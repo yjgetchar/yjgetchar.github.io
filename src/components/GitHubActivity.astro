@@ -66,7 +66,7 @@ const levelOpacity = [0, 0.3, 0.5, 0.75, 1];
                   width={cell}
                   height={cell}
                   rx="3.5"
-                  class={day.level === 0 ? 'fill-fg/[0.07]' : 'fill-[#30d158]'}
+                  class={day.level === 0 ? 'fill-fg/[0.07]' : 'fill-accent-bg'}
                   fill-opacity={day.level === 0 ? undefined : levelOpacity[day.level]}
                 >
                   <title>{`${day.date} · ${day.count}회`}</title>

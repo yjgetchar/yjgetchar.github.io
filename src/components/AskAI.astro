@@ -1,0 +1,416 @@
+---
+/**
+ * "Ask AI" — a floating chat launcher + modal <dialog>.
+ *
+ * GitHub Pages is static hosting (no place to hide an API key), so this is a
+ * scripted assistant: answers are pre-rendered from profile.ts + the projects
+ * collection into <template>s, and free-text questions are routed by keywords.
+ * To plug in a real LLM later, replace `route()` with a fetch to a serverless proxy.
+ */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import avatar from '../assets/profile/avatar.jpg';
+import { experience, linkedin, profile, stack } from '../data/profile';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const geminiProjects = projects.filter((p) => p.data.tags.some((t) => /gemini/i.test(t)));
+const now = projects.find((p) => p.data.status === 'In Progress');
+
+const suggestions = [
+  { key: 'projects', label: '프로젝트 보여줘' },
+  { key: 'career', label: '경력이 궁금해요' },
+  { key: 'gemini', label: 'Gemini로 뭘 만들었어요?' },
+  { key: 'stack', label: '기술 스택은?' },
+  { key: 'contact', label: '연락하고 싶어요' },
+];
+---
+
+<button type="button" class="ask-fab" commandfor="ask-ai" command="show-modal" aria-haspopup="dialog">
+  <svg class="size-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+    ><path
+      d="M10 2.5a.75.75 0 0 1 .72.54l1.05 3.66a4.5 4.5 0 0 0 3.08 3.08l3.66 1.05a.75.75 0 0 1 0 1.44l-3.66 1.05a4.5 4.5 0 0 0-3.08 3.08l-1.05 3.66a.75.75 0 0 1-1.44 0l-1.05-3.66a4.5 4.5 0 0 0-3.08-3.08L1.5 12.27a.75.75 0 0 1 0-1.44l3.66-1.05a4.5 4.5 0 0 0 3.08-3.08L9.28 3.04A.75.75 0 0 1 10 2.5Zm8.5-1a.5.5 0 0 1 .48.36l.43 1.5a2 2 0 0 0 1.37 1.37l1.5.43a.5.5 0 0 1 0 .96l-1.5.43a2 2 0 0 0-1.37 1.37l-.43 1.5a.5.5 0 0 1-.96 0l-.43-1.5a2 2 0 0 0-1.37-1.37l-1.5-.43a.5.5 0 0 1 0-.96l1.5-.43a2 2 0 0 0 1.37-1.37l.43-1.5a.5.5 0 0 1 .48-.36Z"
+    ></path></svg
+  >
+  Ask AI
+</button>
+
+<dialog id="ask-ai" class="ask-dialog card" closedby="any" aria-labelledby="ask-ai-title">
+  <div class="flex h-full flex-col">
+    <!-- Header -->
+    <div class="flex items-center gap-3 border-b border-line px-5 py-4">
+      <Image src={avatar} alt="" width={36} height={36} densities={[1, 2]} class="size-9 rounded-full object-cover" />
+      <div class="min-w-0 flex-1">
+        <h2 id="ask-ai-title" class="text-[15px] font-semibold tracking-tight">윤재의 AI 도우미</h2>
+        <p class="text-[12px] text-subtle">미리 준비한 답변으로 동작해요 · Beta</p>
+      </div>
+      <button
+        type="button"
+        commandfor="ask-ai"
+        command="close"
+        class="inline-flex size-10 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
+        aria-label="닫기"
+      >
+        <Icon name="close" class="size-5" />
+      </button>
+    </div>
+
+    <!-- Conversation -->
+    <div class="flex-1 space-y-3 overflow-y-auto px-5 py-5" data-messages aria-live="polite">
+      <div class="msg msg-ai">
+        안녕하세요! 👋 {profile.name}에 대해 궁금한 걸 물어보세요. 아래 추천 질문을 눌러도 좋아요.
+      </div>
+    </div>
+
+    <!-- Suggestions + input -->
+    <div class="border-t border-line px-4 pt-3 pb-4">
+      <div class="-mx-1 flex gap-2 overflow-x-auto px-1 pb-3">
+        {
+          suggestions.map((s) => (
+            <button type="button" class="chip shrink-0 cursor-pointer px-3 py-1.5 text-[13px] hover:text-fg" data-ask={s.key}>
+              {s.label}
+            </button>
+          ))
+        }
+      </div>
+      <form class="flex items-center gap-2" data-ask-form>
+        <label for="ask-input" class="sr-only">질문 입력</label>
+        <input
+          id="ask-input"
+          name="q"
+          type="text"
+          autocomplete="off"
+          enterkeyhint="send"
+          placeholder="프로젝트, 경력, 기술 스택…"
+          class="min-h-11 min-w-0 flex-1 rounded-full border border-line bg-surface-2 px-4 text-[15px] placeholder:text-subtle focus:border-accent focus:outline-none"
+        />
+        <button type="submit" class="btn-primary size-11 shrink-0 !p-0" aria-label="보내기">
+          <Icon name="arrow-right" class="size-5" />
+        </button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<!-- ───────── Pre-rendered answers ───────── -->
+<template data-answer="projects">
+  <p>지금까지 만든 프로젝트예요 👇</p>
+  <ul class="mt-3 space-y-2">
+    {
+      projects.map((p) => (
+        <li>
+          <a href={`/projects/${p.id}`} class="answer-card">
+            <span class="font-semibold">{p.data.title}</span>
+            <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <a href="/projects" class="link-more mt-3">모든 프로젝트 보기 <Icon name="chevron" class="size-3.5" /></a>
+</template>
+
+<template data-answer="career">
+  <p>2018년부터 Samsung Electronics에서 일하고 있어요. 그 전에는 두 곳에서 인턴을 했어요.</p>
+  <ol class="mt-3 space-y-2 border-l border-line pl-4">
+    {
+      experience.map((j) => (
+        <li>
+          <p class="font-semibold">
+            {j.company}
+            {j.role && <span class="text-muted"> · {j.role}</span>}
+          </p>
+          <p class="font-mono text-[12px] text-subtle">{j.period}</p>
+        </li>
+      ))
+    }
+  </ol>
+</template>
+
+<template data-answer="gemini">
+  <p>Gemini로 만든 프로젝트는 {geminiProjects.length}개예요 🤖</p>
+  <ul class="mt-3 space-y-2">
+    {
+      geminiProjects.map((p) => (
+        <li>
+          <a href={`/projects/${p.id}`} class="answer-card">
+            <span class="font-semibold">{p.data.title}</span>
+            <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</template>
+
+<template data-answer="stack">
+  <p>자주 쓰는 기술들이에요 🛠️</p>
+  <div class="mt-3 flex flex-wrap gap-1.5">{stack.map((s) => <span class="chip">{s}</span>)}</div>
+</template>
+
+<template data-answer="now">
+  {
+    now ? (
+      <>
+        <p>
+          요즘은 <strong>{now.data.title}</strong>을(를) 만들고 있어요 🔥
+        </p>
+        <p class="mt-1 text-muted">{now.data.summary}</p>
+        <a href={`/projects/${now.id}`} class="link-more mt-2">
+          자세히 보기 <Icon name="chevron" class="size-3.5" />
+        </a>
+      </>
+    ) : (
+      <p>요즘은 새로운 아이디어를 고민하고 있어요.</p>
+    )
+  }
+</template>
+
+<template data-answer="contact">
+  <p>LinkedIn으로 연락 주시면 가장 빨라요 🙌</p>
+  <div class="mt-3 flex flex-wrap gap-2">
+    <a href={linkedin} target="_blank" rel="noopener" class="btn-primary !min-h-9 !px-4 !text-[13px]">
+      <Icon name="linkedin" class="size-4" /> LinkedIn
+    </a>
+    <a
+      href={`https://github.com/${profile.github}`}
+      target="_blank"
+      rel="noopener"
+      class="btn-secondary !min-h-9 !px-4 !text-[13px]"
+    >
+      <Icon name="github" class="size-4" /> GitHub
+    </a>
+    {
+      profile.email && (
+        <a href={`mailto:${profile.email}`} class="btn-secondary !min-h-9 !px-4 !text-[13px]">
+          <Icon name="mail" class="size-4" /> Email
+        </a>
+      )
+    }
+  </div>
+</template>
+
+<template data-answer="hello">
+  <p>반가워요! 😊 프로젝트, 경력, 기술 스택, 연락처 중에서 궁금한 걸 물어보세요.</p>
+</template>
+
+<template data-answer="fallback">
+  <p>아직 그 질문에는 답을 준비하지 못했어요 🙏</p>
+  <p class="mt-1 text-muted">
+    아래 추천 질문 중에서 골라 보시거나, <a href={linkedin} target="_blank" rel="noopener" class="text-accent underline"
+      >LinkedIn</a
+    >으로 직접 물어봐 주세요.
+  </p>
+</template>
+
+<style>
+  .ask-fab {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 40;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    border: 1px solid color-mix(in oklab, var(--accent-bg) 45%, transparent);
+    border-radius: 999px;
+    background-color: color-mix(in oklab, var(--surface) 85%, transparent);
+    padding: 0 1.15rem;
+    color: var(--fg);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    box-shadow: 0 10px 30px -10px color-mix(in oklab, var(--accent-bg) 45%, transparent);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition:
+      transform 200ms,
+      box-shadow 200ms;
+  }
+  .ask-fab svg {
+    color: var(--accent);
+  }
+  .ask-fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px -10px color-mix(in oklab, var(--accent-bg) 60%, transparent);
+  }
+
+  .ask-dialog {
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    color: var(--fg);
+    /* Mobile: bottom sheet */
+    width: 100%;
+    height: min(85dvh, 640px);
+    margin: auto 0 0;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -20px 60px -20px rgb(0 0 0 / 0.6);
+  }
+  @media (min-width: 640px) {
+    /* Desktop: floating panel above the launcher */
+    .ask-dialog {
+      width: min(400px, calc(100vw - 2.5rem));
+      height: min(620px, calc(100dvh - 2.5rem));
+      margin: auto 1.25rem 1.25rem auto;
+      border-radius: 20px;
+      box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.6);
+    }
+  }
+  .ask-dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.45);
+    backdrop-filter: blur(2px);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ask-dialog[open] {
+      animation: ask-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+  }
+  @keyframes ask-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+  }
+
+  .ask-dialog :global(.msg) {
+    max-width: 88%;
+    border-radius: 18px;
+    padding: 0.7rem 0.95rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+  .ask-dialog :global(.msg-ai) {
+    border-bottom-left-radius: 6px;
+    background-color: var(--surface-2);
+  }
+  .ask-dialog :global(.msg-user) {
+    margin-left: auto;
+    border-bottom-right-radius: 6px;
+    background-color: var(--accent-bg);
+    color: var(--on-accent);
+  }
+  .ask-dialog :global(.answer-card) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background-color: var(--surface);
+    padding: 0.6rem 0.8rem;
+    transition: border-color 200ms;
+  }
+  .ask-dialog :global(.answer-card:hover) {
+    border-color: color-mix(in oklab, var(--accent-bg) 55%, transparent);
+  }
+  .ask-dialog :global(.typing) {
+    display: inline-flex;
+    gap: 0.25rem;
+  }
+  .ask-dialog :global(.typing span) {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background-color: var(--subtle);
+    animation: typing 1s infinite ease-in-out;
+  }
+  .ask-dialog :global(.typing span:nth-child(2)) {
+    animation-delay: 0.15s;
+  }
+  .ask-dialog :global(.typing span:nth-child(3)) {
+    animation-delay: 0.3s;
+  }
+  @keyframes typing {
+    0%,
+    80%,
+    100% {
+      opacity: 0.3;
+    }
+    40% {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  const dialog = document.getElementById('ask-ai') as HTMLDialogElement | null;
+
+  // ── Fallback: Invoker Commands (commandfor/command) for older browsers ──
+  if (!('commandForElement' in HTMLButtonElement.prototype)) {
+    document.addEventListener('click', (event) => {
+      const btn = (event.target as Element | null)?.closest<HTMLButtonElement>('button[commandfor]');
+      if (!btn) return;
+      const target = document.getElementById(btn.getAttribute('commandfor') ?? '');
+      if (!(target instanceof HTMLDialogElement)) return;
+      const command = btn.getAttribute('command');
+      if (command === 'show-modal' && !target.open) target.showModal();
+      if (command === 'close') target.close();
+    });
+  }
+
+  // ── Fallback: light dismiss (closedby="any") for browsers without support ──
+  if (dialog && !('closedBy' in HTMLDialogElement.prototype)) {
+    dialog.addEventListener('click', (event) => {
+      if (event.target !== dialog) return;
+      const r = dialog.getBoundingClientRect();
+      const inside =
+        r.top <= event.clientY && event.clientY <= r.bottom && r.left <= event.clientX && event.clientX <= r.right;
+      if (!inside) dialog.close();
+    });
+  }
+
+  if (dialog) {
+    const list = dialog.querySelector<HTMLElement>('[data-messages]')!;
+    const form = dialog.querySelector<HTMLFormElement>('[data-ask-form]')!;
+    const input = form.querySelector<HTMLInputElement>('input')!;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Ordered: first match wins.
+    const routes: [string, RegExp][] = [
+      ['contact', /연락|컨택|contact|이메일|메일|email|링크드인|linkedin|채용|hire|커피|만나/i],
+      ['career', /경력|이력|career|경험|experience|회사|직장|삼성|samsung|네이버|naver|안랩|ahnlab|인턴|intern|일해/i],
+      ['gemini', /gemini|제미나이|llm|\bai\b|인공지능|에이전트|agent|봇|bot|챗/i],
+      ['stack', /스택|stack|기술|언어|tech|tool|도구|프레임워크|framework|typescript|python/i],
+      ['now', /요즘|지금|최근|now|현재|진행|만드는\s?중/i],
+      ['projects', /프로젝트|project|만든|작업|포트폴리오|portfolio|작품|게임|game/i],
+      ['hello', /안녕|하이|hello|hi\b|hey|반가/i],
+    ];
+    const route = (q: string) => routes.find(([, re]) => re.test(q))?.[0] ?? 'fallback';
+
+    const scrollDown = () => list.scrollTo({ top: list.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' });
+
+    function bubble(kind: 'ai' | 'user') {
+      const el = document.createElement('div');
+      el.className = `msg msg-${kind}`;
+      list.append(el);
+      return el;
+    }
+
+    function ask(question: string, key = route(question)) {
+      bubble('user').textContent = question; // textContent → never interpreted as HTML
+      const reply = bubble('ai');
+      reply.innerHTML = '<span class="typing" aria-label="입력 중"><span></span><span></span><span></span></span>';
+      scrollDown();
+      setTimeout(
+        () => {
+          const tpl = document.querySelector<HTMLTemplateElement>(`template[data-answer="${key}"]`);
+          reply.replaceChildren(tpl ? tpl.content.cloneNode(true) : '');
+          scrollDown();
+        },
+        reduceMotion ? 0 : 450,
+      );
+    }
+
+    dialog.querySelectorAll<HTMLButtonElement>('[data-ask]').forEach((btn) =>
+      btn.addEventListener('click', () => ask(btn.textContent!.trim(), btn.dataset.ask)),
+    );
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+      input.value = '';
+      ask(q);
+    });
+  }
+</script>

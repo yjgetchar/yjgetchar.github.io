@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectPin from '../../components/ProjectPin.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
 
 const projects = (await getCollection('projects')).sort(
   (a, b) => a.data.order - b.data.order || b.data.date.getTime() - a.data.date.getTime(),
@@ -17,19 +17,26 @@ const filterCss = categories
 <BaseLayout title="프로젝트" description="지금까지 만든 프로젝트 모음">
   <style is:inline set:html={filterCss}></style>
 
-  <section class="project-filter mx-auto max-w-[1120px] px-4 pt-14 sm:px-5 md:pt-20">
+  <section class="project-filter">
     <header class="max-w-2xl">
-      <h1 class="text-[44px] leading-[1.05] font-bold tracking-[-0.035em] sm:text-[56px]" data-rise>프로젝트.</h1>
-      <p class="mt-3 text-[19px] leading-relaxed text-muted sm:text-[21px]" data-rise style="--i:1">
+      <p class="font-mono text-[13px] text-accent" data-rise>~/projects</p>
+      <h1 class="mt-2 text-[36px] leading-[1.1] font-bold tracking-[-0.03em] sm:text-[44px]" data-rise style="--i:1">
+        Projects
+      </h1>
+      <p class="mt-3 text-[17px] leading-relaxed text-muted" data-rise style="--i:2">
         AI 에이전트, 게임, 자동화 도구까지. 하나하나 직접 기획하고 만들었어요.
       </p>
     </header>
 
-    <fieldset class="sticky top-[3.25rem] z-20 -mx-4 mt-10 bg-bg/80 px-4 py-3 backdrop-blur-xl sm:-mx-5 sm:px-5" data-rise style="--i:2">
+    <fieldset
+      class="sticky top-14 z-20 -mx-4 mt-8 bg-bg/80 px-4 py-3 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:top-0 lg:mx-0 lg:px-0"
+      data-rise
+      style="--i:3"
+    >
       <legend class="sr-only">카테고리 필터</legend>
       <div class="flex gap-2 overflow-x-auto">
         <input type="radio" name="cat" id="cat-all" class="sr-only" checked />
-        <label for="cat-all" class="filter-pill">전체</label>
+        <label for="cat-all" class="filter-pill">전체 <span class="opacity-60">{projects.length}</span></label>
         {
           categories.map((c) => (
             <>
@@ -43,11 +50,11 @@ const filterCss = categories
       </div>
     </fieldset>
 
-    <div class="masonry mt-6">
+    <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {
         projects.map((p, i) => (
           <div data-cat={p.data.category}>
-            <ProjectPin project={p} eager={i < 3} />
+            <ProjectCard project={p} eager={i < 2} />
           </div>
         ))
       }
@@ -56,29 +63,32 @@ const filterCss = categories
 </BaseLayout>
 
 <style>
-  /* Pinterest-like filter pills */
   .filter-pill {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     min-height: 2.5rem;
-    padding: 0 1.1rem;
+    padding: 0 1rem;
+    border: 1px solid var(--line);
     border-radius: 999px;
-    background-color: color-mix(in oklab, var(--fg) 6%, transparent);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--fg);
+    color: var(--muted);
     cursor: pointer;
     transition:
       background-color 200ms,
+      border-color 200ms,
       color 200ms;
   }
   .filter-pill:hover {
-    background-color: color-mix(in oklab, var(--fg) 11%, transparent);
+    color: var(--fg);
+    border-color: color-mix(in oklab, var(--fg) 20%, transparent);
   }
   input:checked + .filter-pill {
-    background-color: var(--fg);
-    color: var(--bg);
+    border-color: color-mix(in oklab, var(--accent-bg) 60%, transparent);
+    background-color: color-mix(in oklab, var(--accent-bg) 16%, transparent);
+    color: var(--fg);
   }
   input:focus-visible + .filter-pill {
     outline: 2px solid var(--accent);

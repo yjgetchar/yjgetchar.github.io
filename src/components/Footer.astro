@@ -1,47 +1,42 @@
 ---
 import Icon from './Icon.astro';
-import { nav, profile } from '../data/profile';
+import { profile } from '../data/profile';
 
 const year = new Date().getFullYear();
 ---
 
-<!-- Apple-style quiet footer -->
-<footer class="mt-24 border-t border-line">
-  <div class="mx-auto max-w-[1120px] px-5 py-8 text-[12px] text-subtle">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="푸터 메뉴">
-        <a href="/" class="hover:text-fg">홈</a>
-        {nav.map((n) => <a href={n.href} class="hover:text-fg">{n.label}</a>)}
-      </nav>
-      <div class="flex items-center gap-1">
-        {
-          profile.socials.map((s) => (
-            <a
-              href={s.href}
-              target="_blank"
-              rel="noopener"
-              aria-label={s.label}
-              class="inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-fg/[0.06] hover:text-fg"
-            >
-              <Icon name={s.icon} class="size-[18px]" />
-            </a>
-          ))
-        }
-        {
-          profile.email && (
-            <a
-              href={`mailto:${profile.email}`}
-              aria-label="Email"
-              class="inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-fg/[0.06] hover:text-fg"
-            >
-              <Icon name="mail" class="size-[18px]" />
-            </a>
-          )
-        }
-      </div>
-    </div>
-    <p class="mt-5 border-t border-line pt-5">
-      Copyright © {year} {profile.name}. Astro로 만들고 GitHub Pages에서 호스팅합니다.
+<!-- Quiet footer under the content column -->
+<footer class="mt-24 border-t border-line py-8 text-[12px] text-subtle">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <p>
+      © {year}
+      {profile.name}. Astro로 만들고 GitHub Pages에서 호스팅합니다.
     </p>
+    <div class="flex items-center gap-1">
+      {
+        profile.socials.map((s) => (
+          <a
+            href={s.href}
+            target="_blank"
+            rel="noopener"
+            aria-label={s.label}
+            class="inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-fg/[0.06] hover:text-fg"
+          >
+            <Icon name={s.icon} class="size-[18px]" />
+          </a>
+        ))
+      }
+      {
+        profile.email && (
+          <a
+            href={`mailto:${profile.email}`}
+            aria-label="Email"
+            class="inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-fg/[0.06] hover:text-fg"
+          >
+            <Icon name="mail" class="size-[18px]" />
+          </a>
+        )
+      }
+    </div>
   </div>
 </footer>

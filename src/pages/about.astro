@@ -1,77 +1,71 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
-import Timeline from '../components/Timeline.astro';
+import ExperienceList from '../components/ExperienceList.astro';
+import GitHubActivity from '../components/GitHubActivity.astro';
 import Icon from '../components/Icon.astro';
-import { profile, expertise, stack, tintBg } from '../data/profile';
+import { linkedin, profile, expertise, stack } from '../data/profile';
 ---
 
 <BaseLayout title="소개" description={`${profile.name} 소개 — ${profile.role}`}>
-  <div class="mx-auto max-w-[1120px] px-4 pt-14 sm:px-5 md:pt-20">
-    <header class="max-w-2xl">
-      <h1 class="text-[44px] leading-[1.05] font-bold tracking-[-0.035em] sm:text-[56px]" data-rise>소개.</h1>
-      <p class="mt-3 text-[19px] leading-relaxed text-muted sm:text-[21px]" data-rise style="--i:1">
-        {profile.role}, {profile.name}입니다.
+  <header class="max-w-2xl">
+    <p class="font-mono text-[13px] text-accent" data-rise>~/about</p>
+    <h1 class="mt-2 text-[36px] leading-[1.1] font-bold tracking-[-0.03em] sm:text-[44px]" data-rise style="--i:1">
+      안녕하세요, {profile.koreanName}입니다.
+    </h1>
+    <div class="mt-5 space-y-4 text-[17px] leading-relaxed text-muted" data-rise style="--i:2">
+      <p>{profile.intro}</p>
+      <!-- TODO: 더 하고 싶은 이야기 (개발을 시작한 계기, 일하는 방식, 관심사 등) -->
+      <p>
+        새로운 도구가 나오면 직접 써 보고, 일상의 불편함을 작은 자동화로 해결하는 걸 좋아합니다. 요즘은 LLM 에이전트를
+        실제로 쓸 만한 제품으로 만드는 방법과, 여러 사람이 함께 즐기는 실시간 인터랙션에 집중하고 있어요.
       </p>
-    </header>
+    </div>
+    <div class="mt-7 flex flex-wrap gap-2.5" data-rise style="--i:3">
+      <a href="/projects" class="btn-primary">프로젝트 보기 <Icon name="chevron" class="size-4" /></a>
+      <a href={linkedin} target="_blank" rel="noopener" class="btn-secondary">
+        <Icon name="linkedin" class="size-4" /> LinkedIn
+      </a>
+    </div>
+  </header>
 
-    <!-- Bento -->
-    <section class="mt-10 grid auto-rows-[minmax(160px,auto)] grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4" aria-label="프로필">
-      <div data-rise style="--i:2" class="tile col-span-2 row-span-2 md:col-span-1">
-        <img src={profile.avatar} alt={profile.name} width="400" height="400" class="absolute inset-0 size-full object-cover" />
-      </div>
-
-      <div data-rise style="--i:3" class="tile col-span-2 row-span-2 flex flex-col p-7 sm:p-9 md:col-span-3">
-        <p class="eyebrow">안녕하세요</p>
-        <div class="mt-4 space-y-4 text-[17px] leading-relaxed text-muted">
-          <p>{profile.intro}</p>
-          <!-- TODO: 더 하고 싶은 이야기 (개발을 시작한 계기, 일하는 방식, 관심사 등) -->
-          <p>
-            새로운 도구가 나오면 직접 써 보고, 일상의 불편함을 작은 자동화로 해결하는 걸 좋아합니다. 요즘은 LLM 에이전트를
-            실제로 쓸 만한 제품으로 만드는 방법과, 여러 사람이 함께 즐기는 실시간 인터랙션에 집중하고 있어요.
-          </p>
-        </div>
-        <div class="mt-auto flex flex-wrap gap-2.5 pt-8">
-          <a href="/projects" class="btn-primary">프로젝트 보기 <Icon name="chevron" class="size-4" /></a>
-          <a href="/#contact" class="btn-secondary">연락하기</a>
-        </div>
-      </div>
-
+  <section class="mt-20" aria-labelledby="h-what">
+    <SectionTitle id="h-what" title="What I do" />
+    <div class="grid gap-4 md:grid-cols-3">
       {
-        expertise.map((e, i) => (
-          <div data-rise style={`--i:${i + 4}`} class:list={['tile col-span-2 flex flex-col p-6 md:col-span-1', tintBg[e.tint]]}>
-            <span class="text-[32px] leading-none" aria-hidden="true">
+        expertise.map((e) => (
+          <div data-reveal class="card glow-card flex flex-col p-6">
+            <span class="text-[36px] leading-none" aria-hidden="true">
               {e.emoji}
             </span>
-            <p class="mt-auto pt-4 text-[17px] font-bold tracking-tight">{e.title}</p>
-            <div class="mt-2 flex flex-wrap gap-1">
+            <h3 class="mt-5 text-[17px] font-bold tracking-tight">{e.title}</h3>
+            <p class="mt-2 text-[14px] leading-relaxed text-muted">{e.body}</p>
+            <div class="mt-auto flex flex-wrap gap-1.5 pt-5">
               {e.tags.map((t) => (
-                <span class="chip bg-surface/70">{t}</span>
+                <span class="chip">{t}</span>
               ))}
             </div>
           </div>
         ))
       }
+    </div>
+  </section>
 
-      <div data-rise style="--i:7" class="tile col-span-2 flex flex-col p-6 md:col-span-1">
-        <p class="eyebrow">📍 위치</p>
-        <p class="mt-auto text-[28px] font-bold tracking-tight">{profile.location}</p>
-        <p class="text-[13px] text-muted">Korea · KST</p>
-      </div>
-    </section>
+  <section class="mt-20" aria-labelledby="h-exp">
+    <SectionTitle id="h-exp" title="Experience" />
+    <div data-reveal><ExperienceList /></div>
+  </section>
 
-    <section class="mt-24" aria-labelledby="h-stack">
-      <SectionTitle id="h-stack" lead="도구." rest="자주 쓰는 기술들." />
-      <div data-reveal class="tile flex flex-wrap gap-2 p-7">
-        {stack.map((s) => <span class="rounded-full bg-fg/[0.05] px-4 py-2 text-[15px] font-medium">{s}</span>)}
-      </div>
-    </section>
+  <section class="mt-20" aria-labelledby="h-stack">
+    <SectionTitle id="h-stack" title="Stack" sub="자주 쓰는 기술들" />
+    <div data-reveal class="card flex flex-wrap gap-2 p-6">
+      {stack.map((s) => <span class="chip px-3.5 py-1.5 text-[14px]">{s}</span>)}
+    </div>
+  </section>
 
-    <section class="mt-24" aria-labelledby="h-journey">
-      <SectionTitle id="h-journey" lead="걸어온 길." rest="지금까지의 이야기." />
-      <div data-reveal class="tile p-7 sm:p-9">
-        <Timeline />
-      </div>
-    </section>
-  </div>
+  <section class="mt-20" aria-label="GitHub 활동">
+    <div data-reveal class="card p-6">
+      <GitHubActivity weeks={40} />
+    </div>
+  </section>
 </BaseLayout>

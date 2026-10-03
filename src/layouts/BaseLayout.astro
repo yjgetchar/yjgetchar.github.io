@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
-import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
 import Footer from '../components/Footer.astro';
+import AskAI from '../components/AskAI.astro';
 import { profile, site } from '../data/profile';
 
 interface Props {
@@ -35,28 +36,21 @@ const personLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Declare both schemes up-front so the canvas paints in the right colour (avoids FOUC). -->
-    <meta name="color-scheme" content="light dark" />
+    <!-- Dark-first design: declare dark as the preferred scheme to avoid a light flash. -->
+    <meta name="color-scheme" content="dark" />
     <script is:inline>
-      // Must run before first paint: apply a pinned scheme and expose the
-      // effective scheme on <html data-theme> for icon/canvas logic.
+      // Must run before first paint: dark by default, unless the visitor pinned light.
       {
-        const pinned = localStorage.getItem('color-scheme');
-        if (pinned === 'light' || pinned === 'dark') {
-          document.querySelector('meta[name="color-scheme"]').content = pinned;
-          // :root declares `color-scheme: light dark` in CSS, so pin it inline too.
-          document.documentElement.style.colorScheme = pinned;
-        }
-        const sys = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.dataset.theme = pinned || sys;
+        const pinned = localStorage.getItem('color-scheme') === 'light' ? 'light' : 'dark';
+        document.querySelector('meta[name="color-scheme"]').content = pinned;
+        document.documentElement.dataset.theme = pinned;
       }
     </script>
 
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={profile.name} />
-    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#09090b" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -83,7 +77,7 @@ const personLd = {
 
     {structuredData && <script type="application/ld+json" set:html={JSON.stringify(personLd)} />}
   </head>
-  <body class="flex min-h-dvh flex-col overflow-x-clip bg-bg font-sans text-fg">
+  <body class="min-h-dvh overflow-x-clip bg-bg font-sans text-fg">
     <a
       href="#main"
       class="fixed top-3 left-3 z-[70] -translate-y-20 rounded-full bg-fg px-4 py-2 text-sm font-medium text-bg shadow-lg transition-transform focus:translate-y-0"
@@ -91,12 +85,18 @@ const personLd = {
       본문 바로가기
     </a>
 
-    <Header />
+    <!-- Concept A: sticky profile sidebar (lg+) · scrolling content on the right -->
+    <div class="mx-auto max-w-[1200px] px-4 sm:px-6 lg:grid lg:grid-cols-[minmax(280px,340px)_1fr] lg:gap-16 lg:px-10">
+      <Sidebar />
 
-    <main id="main" tabindex="-1" class="relative flex-1 outline-none">
-      <slot />
-    </main>
+      <div class="flex min-h-dvh min-w-0 flex-col">
+        <main id="main" tabindex="-1" class="relative flex-1 pt-8 outline-none lg:pt-12">
+          <slot />
+        </main>
+        <Footer />
+      </div>
+    </div>
 
-    <Footer />
+    <AskAI />
   </body>
 </html>

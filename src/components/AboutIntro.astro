@@ -1,0 +1,92 @@
+---
+/**
+ * Sits above Experience so the page opens with a person, not a résumé:
+ * conversational intro with inline badges → "now building" status → stack marquee.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import SectionTitle from './SectionTitle.astro';
+import { about, stack, profile } from '../data/profile';
+
+interface Props {
+  now?: CollectionEntry<'projects'>;
+}
+const { now } = Astro.props;
+---
+
+<section id="about" aria-labelledby="h-about" class="scroll-mt-20">
+  <SectionTitle id="h-about" title="About" href="/about" linkLabel="자세히" />
+
+  <p class="text-[19px] leading-[1.75] text-muted sm:text-[21px]" data-rise>
+    {
+      about.map((part) =>
+        typeof part === 'string' ? (
+          part
+        ) : (
+          <span class="badge">
+            <span aria-hidden="true">{part.emoji}</span>
+            {part.badge}
+          </span>
+        ),
+      )
+    }
+  </p>
+
+  <!-- Now building + local time -->
+  <div
+    class="card mt-6 flex flex-col gap-3 px-5 py-4 text-[14px] sm:flex-row sm:items-center sm:justify-between"
+    data-rise
+    style="--i:1"
+  >
+    {
+      now ? (
+        <a href={`/projects/${now.id}`} class="group inline-flex min-h-6 items-center gap-2.5">
+          <span class="live-dot" aria-hidden="true" />
+          <span class="text-muted">지금 만드는 중</span>
+          <span class="font-semibold group-hover:text-accent">{now.data.title}</span>
+          <Icon name="chevron" class="size-3.5 text-subtle transition-transform group-hover:translate-x-0.5" />
+        </a>
+      ) : (
+        <span class="inline-flex items-center gap-2.5 text-muted">
+          <span class="live-dot" aria-hidden="true" /> 새로운 아이디어를 고민하는 중
+        </span>
+      )
+    }
+    <span class="inline-flex items-center gap-1.5 text-subtle">
+      <span aria-hidden="true">📍</span>
+      {profile.location.split(',')[0]} ·
+      <time class="font-mono tabular-nums" data-clock>--:--</time>
+    </span>
+  </div>
+
+  <!-- Stack marquee (duplicated list for a seamless loop; the copy is hidden from AT) -->
+  <div class="marquee mt-4" data-rise style="--i:2">
+    <ul class="marquee-track" aria-label="자주 쓰는 기술">
+      {stack.map((s) => <li class="chip shrink-0 px-3 py-1.5 text-[13px]">{s}</li>)}
+      {
+        stack.map((s) => (
+          <li class="chip shrink-0 px-3 py-1.5 text-[13px]" aria-hidden="true">
+            {s}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  import { profile } from '../data/profile';
+
+  const clock = document.querySelector<HTMLElement>('[data-clock]');
+  if (clock) {
+    const fmt = new Intl.DateTimeFormat('ko-KR', {
+      timeZone: profile.timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    const tick = () => (clock.textContent = fmt.format(new Date()));
+    tick();
+    setInterval(tick, 15_000);
+  }
+</script>

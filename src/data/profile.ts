@@ -5,22 +5,21 @@
  * TODO 표시가 있는 항목은 실제 정보로 바꿔 주세요.
  */
 
-export type Tint = 'blue' | 'mint' | 'peach' | 'lavender' | 'butter' | 'rose';
-
 export const profile = {
   /** GitHub 사용자명 — 빌드 시 레포/기여 데이터를 가져올 때 사용 */
   github: 'yjgetchar',
 
-  name: 'Younjae Lee', // TODO: 한글 이름을 쓰고 싶다면 교체 (예: '이윤재')
-  shortName: 'Younjae',
-  greeting: '안녕하세요, 윤재입니다 👋', // TODO
+  name: 'Younjae Lee',
+  koreanName: '이윤재',
   role: 'AI Automation & Product Developer', // TODO
-  headline: 'AI와 함께,\n아이디어를 제품으로.', // TODO
+  /** 사이드바 이름 아래 한 줄 소개 */
+  tagline: 'AI로 반복을 줄이고, 함께 즐길 수 있는 제품을 만듭니다.', // TODO
+  /** SEO description · 소개 페이지 첫 문단 */
   intro:
     'Gemini 기반 AI 에이전트부터 실시간 웹 파티 게임까지, 기획에서 배포까지 직접 만듭니다. 반복되는 일은 자동화하고, 사람들이 함께 즐길 수 있는 경험을 만드는 데 관심이 많아요.', // TODO
-  location: 'Seoul', // TODO
+  location: 'Seoul, KR',
   timezone: 'Asia/Seoul',
-  avatar: '/images/avatar.svg', // TODO: public/images/ 에 사진을 넣고 경로 변경
+  /** 프로필 사진은 src/assets/profile/avatar.jpg 파일을 교체하면 됩니다. */
 
   /** 공개해도 되는 연락처만 남겨 주세요. 비워두면 표시되지 않습니다. */
   email: '', // TODO: 예) 'hello@example.com'
@@ -31,58 +30,64 @@ export const profile = {
   ] as const,
 } as const;
 
-/** 잘하는 일 — 파스텔 벤토 카드 */
-export const expertise: { emoji: string; title: string; body: string; tags: string[]; tint: Tint }[] = [
+export const linkedin = profile.socials.find((s) => s.icon === 'linkedin')!.href;
+
+/**
+ * About 섹션 문단. 문자열은 그대로, { badge } 항목은 아이콘 배지로 표시됩니다.
+ */
+export type AboutPart = string | { badge: string; emoji: string };
+export const about: AboutPart[] = [
+  '2018년부터 ',
+  { badge: 'Samsung Electronics', emoji: '🏢' },
+  '에서 일하고 있어요. 퇴근 후에는 ',
+  { badge: 'AI 에이전트', emoji: '🤖' },
+  '와 ',
+  { badge: '실시간 웹 게임', emoji: '⚡' },
+  '을 만듭니다. 반복되는 일은 자동화하고, 사람들이 함께 즐길 수 있는 경험을 만드는 걸 좋아해요.',
+];
+
+/** Experience — 회사 로고 대신 이니셜 배지로 표시합니다. */
+export interface Job {
+  company: string;
+  initial: string;
+  /** 배지 배경색 */
+  color: string;
+  role?: string;
+  period: string;
+  current?: boolean;
+  /** 한두 줄 설명 (선택) */
+  body?: string;
+}
+export const experience: Job[] = [
+  // TODO: role / body 에 공개 가능한 직무·담당 업무를 적으면 더 좋아요
+  { company: 'Samsung Electronics', initial: 'S', color: '#1428a0', period: '2018.08 — Present', current: true },
+  { company: 'Naver Business Platform', initial: 'N', color: '#03c75a', role: 'Intern', period: '2018.05 — 2018.06' },
+  { company: 'AhnLab', initial: 'A', color: '#0b6bcb', role: 'Intern', period: '2017.12 — 2018.05' },
+];
+
+/** 잘하는 일 — 소개 페이지 카드 */
+export const expertise: { emoji: string; title: string; body: string; tags: string[] }[] = [
   {
     emoji: '🤖',
     title: 'AI 에이전트 & 자동화',
     body: 'LLM을 실제 업무 흐름에 연결해요. Search Grounding, 세션 유지, 화이트리스트 보안까지 갖춘 텔레그램 에이전트를 만들어 운영합니다.',
     tags: ['Gemini API', 'Python', 'Telegram Bot'],
-    tint: 'lavender',
   },
   {
     emoji: '🎮',
     title: '실시간 웹 & 게임',
     body: 'PC 화면과 스마트폰 컨트롤러를 WebSocket으로 잇는 파티 게임 엔진처럼, 지연에 민감한 인터랙티브 웹을 만들어요.',
     tags: ['TypeScript', 'WebSocket', 'Web Audio'],
-    tint: 'peach',
   },
   {
     emoji: '🧩',
     title: '제품 엔지니어링',
     body: '계약 우선 설계와 테스트 주도 개발로, 빠르게 출시하면서도 확장 가능한 구조를 지켜요.',
     tags: ['TDD', 'Contract-First', 'GitHub Actions'],
-    tint: 'mint',
   },
 ];
 
-/** 걸어온 길 */
-export const timeline: { period: string; title: string; org: string; body: string; kind: 'work' | 'edu' }[] = [
-  // TODO: 직무명·담당 업무(body)와 학력을 채우면 더 좋아요
-  {
-    period: '2018.08 — 현재',
-    title: 'Samsung Electronics',
-    org: '재직 중',
-    body: '',
-    kind: 'work',
-  },
-  {
-    period: '2018.05 — 2018.06',
-    title: 'Naver Business Platform',
-    org: 'Intern',
-    body: '',
-    kind: 'work',
-  },
-  {
-    period: '2017.12 — 2018.05',
-    title: 'AhnLab',
-    org: 'Intern',
-    body: '',
-    kind: 'work',
-  },
-];
-
-/** 기술 스택 (벤토 마키 + 별자리 위젯) */
+/** 기술 스택 (About 마키 · 소개 페이지) */
 export const stack = [
   'TypeScript',
   'Python',
@@ -90,28 +95,28 @@ export const stack = [
   'Astro',
   'WebSocket',
   'Node.js',
-  'Telegram',
+  'Telegram Bot',
   'Web Audio',
-  'Tailwind',
-  'Git',
+  'Tailwind CSS',
   'Vitest',
   'GitHub Actions',
-  'LLM',
-  'Automation',
+  'Git',
 ];
 
 /** 섹션 on/off */
 export const sections = {
+  about: true,
+  experience: true,
   projects: true,
-  expertise: true,
-  timeline: true,
   contact: true,
 } as const;
 
+/** 사이드바 내비게이션 — 홈의 섹션 id 와 맞춰 주세요 */
 export const nav = [
-  { label: '소개', href: '/about' },
-  { label: '프로젝트', href: '/projects' },
-  { label: '연락하기', href: '/#contact' },
+  { label: 'About', id: 'about' },
+  { label: 'Experience', id: 'experience' },
+  { label: 'Projects', id: 'projects' },
+  { label: 'Contact', id: 'contact' },
 ] as const;
 
 export const site = {
@@ -120,13 +125,3 @@ export const site = {
   ogImage: '/images/og-default.png',
   locale: 'ko_KR',
 } as const;
-
-/** Tailwind class lookup for tints (kept static so Tailwind can see them) */
-export const tintBg: Record<Tint, string> = {
-  blue: 'bg-t-blue',
-  mint: 'bg-t-mint',
-  peach: 'bg-t-peach',
-  lavender: 'bg-t-lavender',
-  butter: 'bg-t-butter',
-  rose: 'bg-t-rose',
-};

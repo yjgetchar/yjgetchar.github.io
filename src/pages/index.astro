@@ -1,172 +1,47 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ProfileCard from '../components/ProfileCard.astro';
+import AboutIntro from '../components/AboutIntro.astro';
+import ExperienceList from '../components/ExperienceList.astro';
 import SectionTitle from '../components/SectionTitle.astro';
-import ProjectPin from '../components/ProjectPin.astro';
-import Timeline from '../components/Timeline.astro';
-import GitHubActivity from '../components/GitHubActivity.astro';
-import ConstellationWidget from '../components/ConstellationWidget.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import Icon from '../components/Icon.astro';
-import { profile, expertise, sections, tintBg } from '../data/profile';
+import { linkedin, profile, sections } from '../data/profile';
 
 const all = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const featured = all.filter((p) => p.data.featured);
-const now = all.find((p) => p.data.status === 'In Progress') ?? all[0];
-const contactHref = profile.email ? `mailto:${profile.email}` : 'https://www.linkedin.com/in/younjae-lee';
+const now = all.find((p) => p.data.status === 'In Progress');
 ---
 
 <BaseLayout structuredData>
-  <div class="mx-auto max-w-[1120px] px-4 sm:px-5">
-    <!-- ───────────── Bento hero ───────────── -->
-    <section
-      aria-label="소개"
-      class="grid grid-flow-dense auto-rows-[minmax(168px,auto)] grid-cols-2 gap-3 pt-6 sm:gap-4 md:grid-cols-4 md:pt-10"
-    >
-      <!-- Intro -->
-      <div data-rise class="tile col-span-2 row-span-2 flex flex-col justify-between p-7 sm:p-9">
-        <div>
-          <p class="text-[15px] font-medium text-muted">{profile.greeting}</p>
-          <h1
-            class="mt-3 text-[40px] leading-[1.06] font-bold tracking-[-0.035em] whitespace-pre-line sm:text-[52px] lg:text-[56px]"
-          >
-            {profile.headline}
-          </h1>
-          <p class="mt-5 max-w-md text-[15px] leading-relaxed text-muted">{profile.intro}</p>
-        </div>
-        <div class="mt-7 flex flex-wrap gap-2.5">
-          <a href="/projects" class="btn-primary">프로젝트 보기 <Icon name="chevron" class="size-4" /></a>
-          {
-            profile.socials.map((s) => (
-              <a href={s.href} target="_blank" rel="noopener" class="btn-secondary">
-                <Icon name={s.icon} class="size-4" /> {s.label}
-              </a>
-            ))
-          }
-        </div>
-      </div>
+  <h1 class="sr-only">{profile.name} — {profile.role}</h1>
 
-      <!-- Avatar -->
-      <div data-rise style="--i:1" class="tile col-span-1 row-span-1 md:row-span-2">
-        <img
-          src={profile.avatar}
-          alt={profile.name}
-          width="400"
-          height="400"
-          fetchpriority="high"
-          class="absolute inset-0 size-full object-cover"
-        />
-        <div
-          class="absolute inset-x-3 bottom-3 hidden rounded-2xl bg-white/80 px-3.5 py-2.5 text-[#1d1d1f] backdrop-blur-md md:block"
-        >
-          <p class="text-[14px] font-semibold tracking-tight">{profile.name}</p>
-          <p class="text-[11px] text-[#6e6e73]">{profile.role}</p>
-        </div>
-      </div>
+  <!-- Mobile only: the sidebar profile becomes the first card -->
+  <div class="card mb-14 px-6 py-8 lg:hidden" data-rise>
+    <ProfileCard eager />
+  </div>
 
-      <!-- Now building -->
-      {
-        now && (
-          <a
-            href={`/projects/${now.id}`}
-            data-rise
-            style="--i:2"
-            class:list={['tile tile-hover col-span-1 flex flex-col p-5', tintBg[now.data.tint]]}
-          >
-            <p class="eyebrow flex items-center gap-1.5">
-              <span class="relative flex size-2">
-                <span class="absolute inline-flex size-full animate-ping rounded-full bg-[#30d158] opacity-60 motion-reduce:hidden" />
-                <span class="relative inline-flex size-2 rounded-full bg-[#30d158]" />
-              </span>
-              지금 만드는 중
-            </p>
-            <p class="mt-2 text-[19px] leading-tight font-bold tracking-tight">{now.data.title}</p>
-            <Image
-              src={now.data.cover}
-              alt=""
-              width={160}
-              class="mt-auto ml-auto size-16 rounded-2xl object-cover shadow-md"
-            />
-          </a>
-        )
-      }
+  <div class="flex flex-col gap-20 sm:gap-24">
+    {sections.about && <AboutIntro now={now} />}
 
-      <!-- Local time -->
-      <div data-rise style="--i:3" class="tile col-span-1 flex flex-col bg-t-blue p-5">
-        <p class="eyebrow">📍 {profile.location}</p>
-        <p class="mt-auto text-[40px] leading-none font-bold tracking-[-0.04em] tabular-nums" data-clock>--:--</p>
-        <p class="mt-1.5 text-[13px] text-muted" data-clock-date>&nbsp;</p>
-      </div>
+    {
+      sections.experience && (
+        <section id="experience" aria-labelledby="h-experience" class="scroll-mt-20" data-reveal>
+          <SectionTitle id="h-experience" title="Experience" />
+          <ExperienceList />
+        </section>
+      )
+    }
 
-      <!-- Constellation widget -->
-      <div
-        data-rise
-        style="--i:4"
-        class="tile col-span-2 min-h-[200px] cursor-grab bg-t-lavender active:cursor-grabbing"
-      >
-        <ConstellationWidget />
-        <p
-          class="pointer-events-none absolute top-4 left-5 rounded-full bg-surface/80 px-3 py-1 text-[12px] font-semibold text-muted backdrop-blur"
-        >
-          ✨ 기술 스택 · 만지거나 눌러보세요
-        </p>
-      </div>
-
-      <!-- Focus -->
-      <div data-rise style="--i:5" class="tile col-span-2 flex flex-col bg-t-butter p-6">
-        <p class="eyebrow">요즘 관심사</p>
-        <ul class="mt-auto grid grid-cols-3 gap-3 pt-4">
-          {
-            expertise.map((e) => (
-              <li class="rounded-2xl bg-surface/70 p-3.5">
-                <span class="text-[28px] leading-none" aria-hidden="true">
-                  {e.emoji}
-                </span>
-                <p class="mt-2 text-[13px] leading-snug font-semibold">{e.title}</p>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <!-- GitHub activity -->
-      <div data-rise style="--i:6" class="tile col-span-2 p-6">
-        <GitHubActivity weeks={26} />
-      </div>
-
-      <!-- Project count -->
-      <a href="/projects" data-rise style="--i:7" class="tile tile-hover col-span-1 flex flex-col bg-t-mint p-5">
-        <p class="eyebrow">프로젝트</p>
-        <p class="mt-auto text-[56px] leading-none font-bold tracking-[-0.04em]">{all.length}</p>
-        <p class="mt-1 flex items-center gap-0.5 text-[13px] font-medium text-accent">
-          모두 보기 <Icon name="chevron" class="size-3.5" />
-        </p>
-      </a>
-
-      <!-- Contact -->
-      <a
-        href={contactHref}
-        target={profile.email ? undefined : '_blank'}
-        rel={profile.email ? undefined : 'noopener'}
-        data-rise
-        style="--i:8"
-        class="tile tile-hover col-span-2 flex flex-col bg-accent p-5 text-white md:col-span-1"
-      >
-        <p class="text-[13px] font-semibold text-white/75">Contact</p>
-        <Icon name="external" class="mt-auto ml-auto size-7" />
-        <p class="mt-2 text-[22px] leading-tight font-bold tracking-tight">연락하기</p>
-      </a>
-    </section>
-
-    <!-- ───────────── Projects (Pinterest masonry) ───────────── -->
     {
       sections.projects && (
-        <section class="mt-24 sm:mt-32" aria-labelledby="h-projects">
-          <SectionTitle id="h-projects" lead="만든 것들." rest="직접 기획하고, 만들고, 운영해요." href="/projects" />
-          <div class="masonry">
+        <section id="projects" aria-labelledby="h-projects" class="scroll-mt-20">
+          <SectionTitle id="h-projects" title="Projects" sub="직접 기획하고, 만들고, 운영해요." href="/projects" />
+          <div class="grid gap-5 sm:grid-cols-2">
             {featured.map((p, i) => (
               <div data-reveal>
-                <ProjectPin project={p} eager={i < 2} />
+                <ProjectCard project={p} eager={i < 2} />
               </div>
             ))}
           </div>
@@ -174,65 +49,30 @@ const contactHref = profile.email ? `mailto:${profile.email}` : 'https://www.lin
       )
     }
 
-    <!-- ───────────── Expertise ───────────── -->
-    {
-      sections.expertise && (
-        <section class="mt-24 sm:mt-32" aria-labelledby="h-expertise">
-          <SectionTitle id="h-expertise" lead="잘하는 일." rest="아이디어에서 출시까지." />
-          <div class="grid gap-4 md:grid-cols-3">
-            {expertise.map((e) => (
-              <div data-reveal class:list={['tile flex flex-col p-7', tintBg[e.tint]]}>
-                <span class="text-[44px] leading-none" aria-hidden="true">
-                  {e.emoji}
-                </span>
-                <h3 class="mt-6 text-[21px] font-bold tracking-tight">{e.title}</h3>
-                <p class="mt-2 text-[15px] leading-relaxed text-muted">{e.body}</p>
-                <div class="mt-auto flex flex-wrap gap-1.5 pt-6">
-                  {e.tags.map((t) => (
-                    <span class="chip bg-surface/70">{t}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )
-    }
-
-    <!-- ───────────── Timeline ───────────── -->
-    {
-      sections.timeline && (
-        <section class="mt-24 sm:mt-32" aria-labelledby="h-journey">
-          <SectionTitle id="h-journey" lead="걸어온 길." rest="지금까지의 이야기." href="/about" linkLabel="소개 더 보기" />
-          <div data-reveal class="tile p-7 sm:p-9">
-            <Timeline />
-          </div>
-        </section>
-      )
-    }
-
-    <!-- ───────────── Contact ───────────── -->
     {
       sections.contact && (
-        <section id="contact" class="mt-24 sm:mt-32" aria-labelledby="h-contact">
-          <div data-reveal class="tile px-7 py-16 text-center sm:py-20">
-            <p class="text-[44px] leading-none" aria-hidden="true">
+        <section id="contact" aria-labelledby="h-contact" class="scroll-mt-20" data-reveal>
+          <div class="card overflow-hidden px-6 py-12 text-center sm:px-10 sm:py-14">
+            <div
+              class="pointer-events-none absolute inset-x-0 -top-24 mx-auto h-48 w-3/4 rounded-full bg-accent-bg/20 blur-3xl"
+              aria-hidden="true"
+            />
+            <p class="text-[40px] leading-none" aria-hidden="true">
               👋
             </p>
-            <h2 id="h-contact" class="headline mt-5">
+            <h2 id="h-contact" class="mt-5 text-[28px] font-bold tracking-[-0.03em] sm:text-[32px]">
               함께 만들어요.
             </h2>
-            <p class="mx-auto mt-3 max-w-md text-[17px] text-muted">협업 제안, 피드백, 아이디어 모두 환영합니다.</p>
+            <p class="mx-auto mt-3 max-w-md text-[16px] text-muted">협업 제안, 피드백, 아이디어 모두 환영합니다.</p>
             <div class="mt-8 flex flex-wrap justify-center gap-2.5">
-              {profile.email ? (
-                <a href={`mailto:${profile.email}`} class="btn-primary">
+              {profile.email && (
+                <a href={`mailto:${profile.email}`} class="btn-secondary">
                   <Icon name="mail" class="size-4" /> {profile.email}
                 </a>
-              ) : (
-                <a href="https://www.linkedin.com/in/younjae-lee" target="_blank" rel="noopener" class="btn-primary">
-                  <Icon name="linkedin" class="size-4" /> LinkedIn으로 연락하기
-                </a>
               )}
+              <a href={linkedin} target="_blank" rel="noopener" class="btn-primary">
+                <Icon name="linkedin" class="size-4" /> LinkedIn으로 연락하기
+              </a>
               <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener" class="btn-secondary">
                 <Icon name="github" class="size-4" /> GitHub
               </a>
@@ -243,30 +83,3 @@ const contactHref = profile.email ? `mailto:${profile.email}` : 'https://www.lin
     }
   </div>
 </BaseLayout>
-
-<script>
-  // Live local-time widget
-  import { profile } from '../data/profile';
-
-  const clock = document.querySelector<HTMLElement>('[data-clock]');
-  const dateEl = document.querySelector<HTMLElement>('[data-clock-date]');
-  const timeFmt = new Intl.DateTimeFormat('ko-KR', {
-    timeZone: profile.timezone,
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  const dateFmt = new Intl.DateTimeFormat('ko-KR', {
-    timeZone: profile.timezone,
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-  });
-  function tick() {
-    const d = new Date();
-    if (clock) clock.textContent = timeFmt.format(d);
-    if (dateEl) dateEl.textContent = dateFmt.format(d);
-  }
-  tick();
-  setInterval(tick, 15_000);
-</script>

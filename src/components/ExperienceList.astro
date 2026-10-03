@@ -1,0 +1,38 @@
+---
+/**
+ * Experience rows with initial badges (no company logos → no trademark issues).
+ */
+import { experience } from '../data/profile';
+---
+
+<ol class="card divide-y divide-line overflow-hidden">
+  {
+    experience.map((job) => (
+      <li class="flex items-start gap-4 px-5 py-4 sm:items-center sm:px-6 sm:py-5">
+        <span
+          class="grid size-11 shrink-0 place-items-center rounded-xl text-[18px] font-bold text-white shadow-sm"
+          style={`background-color:${job.color}`}
+          aria-hidden="true"
+        >
+          {job.initial}
+        </span>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <h3 class="flex flex-wrap items-center gap-2 text-[16px] font-semibold tracking-tight">
+              {job.company}
+              {job.role && <span class="chip">{job.role}</span>}
+              {job.current && (
+                <span class="chip gap-1.5 text-accent">
+                  <span class="live-dot size-1.5" aria-hidden="true" />
+                  재직 중
+                </span>
+              )}
+            </h3>
+            <p class="shrink-0 font-mono text-[13px] text-subtle tabular-nums">{job.period}</p>
+          </div>
+          {job.body && <p class="mt-1.5 text-[14px] leading-relaxed text-muted">{job.body}</p>}
+        </div>
+      </li>
+    ))
+  }
+</ol>
