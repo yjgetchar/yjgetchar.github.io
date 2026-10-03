@@ -26,6 +26,7 @@ Update this file whenever a decision is made or a step is committed.
 | 2026-10-04 | Design log + README update; photos/samples gathered into one review page (`walkthrough.md` in session `6529afc1…`) | Committed `b1d9016`+, **not pushed** |
 
 | 2026-10-04 | **User picks:** About under GitHub/LinkedIn in the sidebar, LinkedIn content in About, photo ⑨ (3D) with click → ③ (real), job in About, push | Done, pushed |
+| 2026-10-04 | Drop education/language from About; all project covers redone in dark Apple product style (graphite + emerald, one object, no text); **AI Star Chaser** added (featured #2, Portfolio Site moved off the home grid); catchphrase header (`Hero.astro`) with 5 candidates, hidden until picked | Done |
 
 ## A안 structure (as built)
 
@@ -33,10 +34,22 @@ Update this file whenever a decision is made or a step is committed.
 - Avatar (`Avatar.astro`): ⑨ 3D on the front, ③ real photo on the back. Clicking the profile avatar sets `html[data-avatar="photo"]`, which flips every avatar on the page (sidebar, mobile card, top bar, Ask AI).
 - About content comes from the public LinkedIn profile: System Software Engineer @ Samsung Electronics, embedded systems · Android/Linux, 8+ years, Dankook Univ. (2011–2018), JLPT N2, OPIc Chinese IM2. The full LinkedIn summary is cut off at "Android/Linux…" for logged-out visitors, so only that part is used.
 - Mobile: the sidebar collapses into a top bar plus a profile card (profile + About, `#about`) at the top of the home page. The mobile menu adds an About link.
-- Right column order: **Now strip** (`NowStrip.astro`: now building + local time + stack marquee) → Experience (`ExperienceList.astro`) → Projects (`ProjectCard.astro`) → Contact.
+- Right column order: (catchphrase header, once chosen) → **Now strip** (`NowStrip.astro`: now building + local time + stack marquee) → Experience (`ExperienceList.astro`) → Projects (`ProjectCard.astro`) → Contact.
 - `AskAI.astro`: bottom-right "Ask AI" button opening a `<dialog>`. It answers only from prepared Q&A in `profile.ts`, with no server or API key, because GitHub Pages is static.
 - Tokens: dark-first zinc (`#09090b`) + emerald accent, light theme kept.
 - Companies are shown as initial badges (S / N / A) instead of logos to avoid trademark use.
+
+## Catchphrase candidates (`heroOptions` in profile.ts, pick with `heroChoice`)
+
+Eyebrow for all: `yj.getchar()` (wordmark idea from the GitHub handle; `getchar()` also nods to C/system programming).
+
+1. **Just do AI.** — 고민은 짧게, 실행은 AI와 함께. (user's idea; a period reads more confident than "?")
+2. **Low-level by day, AI by night.** — 낮에는 임베디드와 Android/Linux, 밤에는 AI 에이전트와 웹 게임. (recommended: tells his own story)
+3. **From kernel to agent.** — 커널에서 에이전트까지.
+4. **Less repetition, more play.** — 반복은 AI에게, 재미는 사람에게.
+5. **Input: an idea. Output: a product.**
+
+Mockups are real screenshots per candidate: `~/.gemini/antigravity/brain/6529afc1-4b61-4e99-a9f0-93da823cc31c/mockups/`.
 
 ## Open decisions
 

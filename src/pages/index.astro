@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProfileCard from '../components/ProfileCard.astro';
 import AboutCard from '../components/AboutCard.astro';
+import Hero from '../components/Hero.astro';
 import NowStrip from '../components/NowStrip.astro';
 import ExperienceList from '../components/ExperienceList.astro';
 import SectionTitle from '../components/SectionTitle.astro';
@@ -17,6 +18,8 @@ const now = all.find((p) => p.data.status === 'In Progress');
 
 <BaseLayout structuredData>
   <h1 class="sr-only">{profile.name} — {profile.role}</h1>
+
+  <Hero />
 
   <!-- Mobile only: the sidebar (profile + About) becomes the first card -->
   <div class="card mb-14 px-6 py-8 lg:hidden" data-rise>

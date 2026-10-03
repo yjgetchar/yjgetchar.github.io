@@ -1,0 +1,40 @@
+---
+/**
+ * Catchphrase header at the top of the home page (right column on desktop).
+ * Hidden while `heroChoice` in profile.ts is null.
+ */
+import { heroChoice, heroOptions } from '../data/profile';
+
+const hero = heroChoice ? heroOptions[heroChoice - 1] : undefined;
+---
+
+{
+  hero && (
+    <section aria-label="소개 문구" class="pt-2 pb-12 sm:pb-14 lg:pt-6">
+      <p class="font-mono text-[13px] text-accent" data-rise>
+        {hero.eyebrow}
+      </p>
+      <p
+        class="mt-4 text-[44px] leading-[1.04] font-bold tracking-[-0.045em] text-balance sm:text-[60px] lg:text-[64px]"
+        data-rise
+        style="--i:1"
+      >
+        {hero.lead}
+        <br />
+        <span class="hero-accent">{hero.accent}</span>
+      </p>
+      <p class="mt-5 max-w-xl text-[17px] leading-relaxed text-muted" data-rise style="--i:2">
+        {hero.sub}
+      </p>
+    </section>
+  )
+}
+
+<style>
+  .hero-accent {
+    background: linear-gradient(100deg, var(--accent) 10%, color-mix(in oklab, var(--accent) 45%, var(--fg)) 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+</style>
