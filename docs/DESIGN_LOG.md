@@ -43,7 +43,7 @@ Update this file whenever a decision is made or a step is committed.
 
 Eyebrow for all: `yj.getchar()` (wordmark idea from the GitHub handle; `getchar()` also nods to C/system programming).
 
-⭐ **Selected:** `Slow is fast in AI.` (Sub: '원리와 기본을 단단하게 다질 때, AI는 가장 빠르고 확실한 제품이 됩니다.')
+⭐ **Selected:** `Slow is Fast in AI — Just Do AI.` (Sub: '원리와 기본을 단단하게 다질 때, AI는 가장 빠르고 확실한 제품이 됩니다. 고민은 짧게, 실행은 AI와 함께.')
 
 Previous candidates preserved:
 2. **Low-level by day, AI by night.** — 낮에는 임베디드와 Android/Linux, 밤에는 AI 에이전트와 웹 게임. (recommended: tells his own story)

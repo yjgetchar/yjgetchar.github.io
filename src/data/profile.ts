@@ -39,9 +39,9 @@ export const linkedin = profile.socials.find((s) => s.icon === 'linkedin')!.href
  */
 export const hero = {
   eyebrow: 'yj.getchar()',
-  lead: 'Slow is fast',
-  accent: 'in AI.',
-  sub: '원리와 기본을 단단하게 다질 때, AI는 가장 빠르고 확실한 제품이 됩니다.',
+  lead: 'Slow is Fast in AI',
+  accent: '— Just Do AI.',
+  sub: '원리와 기본을 단단하게 다질 때, AI는 가장 빠르고 확실한 제품이 됩니다. 고민은 짧게, 실행은 AI와 함께.',
 } as const;
 
 /**
