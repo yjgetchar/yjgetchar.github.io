@@ -34,27 +34,15 @@ export const profile = {
 export const linkedin = profile.socials.find((s) => s.icon === 'linkedin')!.href;
 
 /**
- * 오른쪽 맨 위 캐치프레이즈 후보. heroChoice에 번호(1~5)를 넣으면 표시되고, null이면 숨깁니다.
+ * 오른쪽 맨 위 캐치프레이즈 (포트폴리오 타이틀)
  * lead는 흰 글씨, accent는 에메랄드 그라데이션으로 표시됩니다.
  */
-export const heroOptions = [
-  { eyebrow: 'yj.getchar()', lead: 'Just do', accent: 'AI.', sub: '고민은 짧게, 실행은 AI와 함께. 떠오른 아이디어를 바로 만들어 봅니다.' },
-  {
-    eyebrow: 'yj.getchar()',
-    lead: 'Low-level by day,',
-    accent: 'AI by night.',
-    sub: '낮에는 임베디드와 Android/Linux를, 밤에는 AI 에이전트와 웹 게임을 만듭니다.',
-  },
-  { eyebrow: 'yj.getchar()', lead: 'From kernel', accent: 'to agent.', sub: '커널 가까이에서 시작해, 이제는 AI 에이전트까지 직접 만듭니다.' },
-  { eyebrow: 'yj.getchar()', lead: 'Less repetition,', accent: 'more play.', sub: '반복은 AI에게 맡기고, 사람은 더 재미있는 일을 하도록.' },
-  {
-    eyebrow: 'yj.getchar()',
-    lead: 'Input: an idea.',
-    accent: 'Output: a product.',
-    sub: '아이디어 한 줄을 AI와 함께 실제로 동작하는 제품으로 바꿉니다.',
-  },
-] as const;
-export const heroChoice: number | null = null;
+export const hero = {
+  eyebrow: 'yj.getchar()',
+  lead: 'Slow is fast',
+  accent: 'in AI.',
+  sub: '원리와 기본을 단단하게 다질 때, AI는 가장 빠르고 확실한 제품이 됩니다.',
+} as const;
 
 /**
  * About 문단 (사이드바 · 모바일 프로필 카드). 문자열은 그대로, { badge } 항목은 아이콘 배지로 표시됩니다.

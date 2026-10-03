@@ -43,7 +43,9 @@ Update this file whenever a decision is made or a step is committed.
 
 Eyebrow for all: `yj.getchar()` (wordmark idea from the GitHub handle; `getchar()` also nods to C/system programming).
 
-1. **Just do AI.** — 고민은 짧게, 실행은 AI와 함께. (user's idea; a period reads more confident than "?")
+⭐ **Selected:** `Slow is fast in AI.` (Sub: '원리와 기본을 단단하게 다질 때, AI는 가장 빠르고 확실한 제품이 됩니다.')
+
+Previous candidates preserved:
 2. **Low-level by day, AI by night.** — 낮에는 임베디드와 Android/Linux, 밤에는 AI 에이전트와 웹 게임. (recommended: tells his own story)
 3. **From kernel to agent.** — 커널에서 에이전트까지.
 4. **Less repetition, more play.** — 반복은 AI에게, 재미는 사람에게.
