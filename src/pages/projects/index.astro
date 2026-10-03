@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order || b.data.date.getTime() - a.data.date.getTime(),
+);
+const categories = [...new Set(projects.map((p) => p.data.category))];
+
+// Pure-CSS filter: radio inputs + :has(), no client JS needed.
+const filterCss = categories
+  .map(
+    (c) =>
+      `.project-filter:has(#cat-${c}:checked) [data-cat]:not([data-cat="${c}"]){display:none}`,
+  )
+  .join('\n');
+---
+
+<BaseLayout title="Projects" description="지금까지 만든 프로젝트 모음">
+  <style is:inline set:html={filterCss}></style>
+
+  <section class="project-filter mx-auto max-w-6xl px-6 pt-16 pb-24 md:pt-20">
+    <p class="font-mono text-[11px] font-medium tracking-[0.2em] text-subtle uppercase" data-rise>Projects</p>
+    <h1 class="mt-3 font-heading text-4xl font-bold tracking-tight sm:text-5xl" data-rise style="--i:1">
+      만든 것들
+    </h1>
+    <p class="mt-4 max-w-xl text-muted" data-rise style="--i:2">
+      AI 에이전트, 게임, 자동화 도구까지 직접 기획하고 만든 프로젝트예요. 카드를 누르면 자세한 내용을 볼 수 있어요.
+    </p>
+
+    <fieldset class="mt-10 flex flex-wrap gap-2" data-rise style="--i:3">
+      <legend class="sr-only">카테고리 필터</legend>
+      <input type="radio" name="cat" id="cat-all" class="sr-only" checked />
+      <label for="cat-all" class="chip">전체 <span class="chip-count">{projects.length}</span></label>
+      {
+        categories.map((c) => (
+          <>
+            <input type="radio" name="cat" id={`cat-${c}`} class="sr-only" />
+            <label for={`cat-${c}`} class="chip">
+              {c} <span class="chip-count">{projects.filter((p) => p.data.category === c).length}</span>
+            </label>
+          </>
+        ))
+      }
+    </fieldset>
+
+    <ul class="mt-8 grid gap-5 md:grid-cols-2" role="list">
+      {
+        projects.map((p) => (
+          <li data-cat={p.data.category} class="flex" data-reveal>
+            <ProjectCard project={p} />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background-color: var(--surface);
+    font-size: 0.875rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      color 200ms,
+      background-color 200ms,
+      border-color 200ms;
+  }
+  .chip:hover {
+    color: var(--fg);
+  }
+  .chip-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--subtle);
+  }
+  input:checked + .chip {
+    color: var(--bg);
+    background-color: var(--fg);
+    border-color: var(--fg);
+  }
+  input:checked + .chip .chip-count {
+    color: inherit;
+    opacity: 0.7;
+  }
+  input:focus-visible + .chip {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  li > :global(article) {
+    flex: 1;
+  }
+</style>

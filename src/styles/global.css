@@ -1,0 +1,298 @@
+@import 'tailwindcss';
+
+/* `dark:` follows the effective theme (system or pinned), set on <html data-theme>. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ------------------------------------------------------------------
+ * Design tokens
+ * Raw light/dark values are kept separately so they can be combined
+ * with light-dark() and still fall back to prefers-color-scheme.
+ * The page follows the OS theme by default; the toggle in the header
+ * pins a scheme by updating <meta name="color-scheme">.
+ * ------------------------------------------------------------------ */
+:root {
+  color-scheme: light dark;
+
+  --bg-l: #f6f7f9;
+  --bg-d: #0a0c10;
+  --surface-l: rgb(255 255 255 / 0.62);
+  --surface-d: rgb(22 26 34 / 0.62);
+  --surface-strong-l: #ffffff;
+  --surface-strong-d: #151922;
+  --line-l: rgb(15 23 42 / 0.08);
+  --line-d: rgb(255 255 255 / 0.08);
+  --fg-l: #16191f;
+  --fg-d: #e8eaef;
+  --muted-l: #545b68;
+  --muted-d: #a0a8b6;
+  --subtle-l: #8a919e;
+  --subtle-d: #6c7484;
+  --accent-l: #0d8f84;
+  --accent-d: #2dd4bf;
+  --accent-2-l: #6250f0;
+  --accent-2-d: #a5b4fc;
+  --accent-soft-l: rgb(13 143 132 / 0.09);
+  --accent-soft-d: rgb(45 212 191 / 0.12);
+
+  --bg: light-dark(var(--bg-l), var(--bg-d));
+  --surface: light-dark(var(--surface-l), var(--surface-d));
+  --surface-strong: light-dark(var(--surface-strong-l), var(--surface-strong-d));
+  --line: light-dark(var(--line-l), var(--line-d));
+  --fg: light-dark(var(--fg-l), var(--fg-d));
+  --muted: light-dark(var(--muted-l), var(--muted-d));
+  --subtle: light-dark(var(--subtle-l), var(--subtle-d));
+  --accent: light-dark(var(--accent-l), var(--accent-d));
+  --accent-2: light-dark(var(--accent-2-l), var(--accent-2-d));
+  --accent-soft: light-dark(var(--accent-soft-l), var(--accent-soft-d));
+
+  accent-color: var(--accent);
+  scrollbar-color: var(--subtle) transparent;
+  scrollbar-width: thin;
+}
+
+/* Fallback for browsers without light-dark() */
+@supports not (color: light-dark(white, black)) {
+  :root {
+    --bg: var(--bg-l);
+    --surface: var(--surface-l);
+    --surface-strong: var(--surface-strong-l);
+    --line: var(--line-l);
+    --fg: var(--fg-l);
+    --muted: var(--muted-l);
+    --subtle: var(--subtle-l);
+    --accent: var(--accent-l);
+    --accent-2: var(--accent-2-l);
+    --accent-soft: var(--accent-soft-l);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: var(--bg-d);
+      --surface: var(--surface-d);
+      --surface-strong: var(--surface-strong-d);
+      --line: var(--line-d);
+      --fg: var(--fg-d);
+      --muted: var(--muted-d);
+      --subtle: var(--subtle-d);
+      --accent: var(--accent-d);
+      --accent-2: var(--accent-2-d);
+      --accent-soft: var(--accent-soft-d);
+    }
+  }
+}
+
+/* Expose tokens as Tailwind utilities (bg-bg, text-muted, border-line …) */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-line: var(--line);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+}
+
+@theme {
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
+    'Noto Sans KR', sans-serif;
+  --font-heading: 'Space Grotesk', 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  html {
+    background-color: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* Long Korean words should break naturally */
+  body {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ------------------------------------------------------------------
+ * Components
+ * ------------------------------------------------------------------ */
+@layer components {
+  /* Frosted panel used for every top-level section */
+  .glass {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.375rem;
+    border: 1px solid var(--line);
+    background-color: color-mix(in oklab, var(--fg) 4%, transparent);
+    padding: 0.125rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .hero-gradient {
+    background-image: linear-gradient(120deg, var(--fg) 20%, var(--accent) 60%, var(--accent-2) 95%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  /* Lift-on-hover card */
+  .lift {
+    transition:
+      transform 300ms ease,
+      box-shadow 300ms ease,
+      border-color 300ms ease,
+      background-color 300ms ease;
+  }
+  .lift:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+    background-color: var(--surface-strong);
+    box-shadow: 0 18px 40px -18px color-mix(in oklab, var(--accent) 35%, transparent);
+  }
+
+  /* Rendered markdown on project detail pages */
+  .prose-body {
+    color: var(--muted);
+    line-height: 1.85;
+  }
+  .prose-body > * + * {
+    margin-top: 1.1em;
+  }
+  .prose-body > :first-child {
+    margin-top: 0;
+  }
+  .prose-body h2 {
+    margin-top: 2.2em;
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .prose-body h3 {
+    margin-top: 1.8em;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .prose-body ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .prose-body ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+  .prose-body li + li {
+    margin-top: 0.35em;
+  }
+  .prose-body a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-body strong {
+    color: var(--fg);
+  }
+  .prose-body code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 0.3rem;
+    background-color: color-mix(in oklab, var(--fg) 7%, transparent);
+  }
+  .prose-body pre {
+    color-scheme: dark;
+    overflow-x: auto;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+  }
+  .prose-body pre code {
+    background: none;
+    padding: 0;
+  }
+  .prose-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 1rem;
+    color: var(--muted);
+  }
+  .prose-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .prose-body th,
+  .prose-body td {
+    border-bottom: 1px solid var(--line);
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+  }
+  .prose-body th {
+    color: var(--fg);
+    font-weight: 600;
+  }
+}
+
+/* ------------------------------------------------------------------
+ * Scroll-reveal (decorative → progressive enhancement, no JS fallback)
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @keyframes reveal-in {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.985);
+      }
+    }
+
+    [data-reveal] {
+      animation: reveal-in auto ease-out backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+
+  /* One-shot entrance for above-the-fold hero content */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+  [data-rise] {
+    animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+}

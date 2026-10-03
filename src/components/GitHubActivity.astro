@@ -1,0 +1,114 @@
+---
+/**
+ * GitHub contribution calendar rendered at build time as SVG
+ * (themed with our tokens instead of an external image).
+ * Hides itself if the data can't be fetched.
+ */
+import Icon from './Icon.astro';
+import { getContributions, getUser } from '../lib/github';
+import { profile } from '../data/profile';
+
+const [contrib, user] = await Promise.all([getContributions(profile.github), getUser(profile.github)]);
+
+const cell = 11;
+const gap = 3;
+let weeks: { date: string; count: number; level: number }[][] = [];
+const monthLabels: { x: number; label: string }[] = [];
+
+if (contrib) {
+  const days = contrib.days;
+  // Pad the first week so columns start on Sunday.
+  const firstDow = new Date(`${days[0].date}T00:00:00Z`).getUTCDay();
+  const padded = [...Array.from({ length: firstDow }, () => null), ...days];
+  for (let i = 0; i < padded.length; i += 7) {
+    weeks.push(padded.slice(i, i + 7).filter(Boolean) as typeof weeks[number]);
+  }
+  let lastMonth = -1;
+  weeks.forEach((wk, i) => {
+    const d = wk[0] && new Date(`${wk[0].date}T00:00:00Z`);
+    if (d && d.getUTCMonth() !== lastMonth && d.getUTCDate() <= 7) {
+      lastMonth = d.getUTCMonth();
+      monthLabels.push({ x: i * (cell + gap), label: `${lastMonth + 1}월` });
+    }
+  });
+}
+
+const width = weeks.length * (cell + gap);
+const height = 7 * (cell + gap) + 18;
+const levelOpacity = [0, 0.28, 0.5, 0.75, 1];
+const firstDowOffset = contrib ? new Date(`${contrib.days[0].date}T00:00:00Z`).getUTCDay() : 0;
+---
+
+{
+  contrib && (
+    <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div class="min-w-0">
+        <div class="overflow-x-auto pb-2" tabindex="0" aria-label="최근 1년 GitHub 기여 그래프 (가로 스크롤)">
+          <svg
+            width={width}
+            height={height}
+            viewBox={`0 0 ${width} ${height}`}
+            role="img"
+            aria-label={`최근 1년간 GitHub 기여 ${contrib.total}회`}
+            class="block"
+          >
+            {monthLabels.map((m) => (
+              <text x={m.x} y="10" class="fill-subtle font-mono" font-size="10">
+                {m.label}
+              </text>
+            ))}
+            {weeks.map((wk, wi) =>
+              wk.map((day, di) => {
+                const row = wi === 0 ? di + firstDowOffset : di;
+                return (
+                  <rect
+                    x={wi * (cell + gap)}
+                    y={18 + row * (cell + gap)}
+                    width={cell}
+                    height={cell}
+                    rx="2.5"
+                    class={day.level === 0 ? 'fill-fg/[0.06]' : 'fill-accent'}
+                    fill-opacity={day.level === 0 ? undefined : levelOpacity[day.level]}
+                  >
+                    <title>{`${day.date} · ${day.count}회`}</title>
+                  </rect>
+                );
+              }),
+            )}
+          </svg>
+        </div>
+        <div class="mt-2 flex items-center justify-end gap-1.5 font-mono text-[11px] text-subtle">
+          적음
+          {levelOpacity.map((o, i) => (
+            <span
+              class:list={['inline-block size-2.5 rounded-[3px]', i === 0 ? 'bg-fg/[0.06]' : 'bg-accent']}
+              style={i === 0 ? undefined : `opacity:${o}`}
+            />
+          ))}
+          많음
+        </div>
+      </div>
+
+      <dl class="grid grid-cols-2 gap-3 lg:w-56 lg:grid-cols-1">
+        <div class="rounded-xl border border-line bg-surface-strong/50 p-4">
+          <dt class="text-xs text-subtle">최근 1년 기여</dt>
+          <dd class="mt-1 font-heading text-2xl font-bold">{contrib.total.toLocaleString('ko-KR')}</dd>
+        </div>
+        {user && (
+          <div class="rounded-xl border border-line bg-surface-strong/50 p-4">
+            <dt class="text-xs text-subtle">공개 레포</dt>
+            <dd class="mt-1 font-heading text-2xl font-bold">{user.public_repos}</dd>
+          </div>
+        )}
+        <a
+          href={`https://github.com/${profile.github}`}
+          target="_blank"
+          rel="noopener"
+          class="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl border border-line px-4 py-3 text-sm text-muted transition-colors hover:border-accent/40 hover:text-fg lg:col-span-1"
+        >
+          <Icon name="github" class="size-4" />@{profile.github}
+        </a>
+      </dl>
+    </div>
+  )
+}

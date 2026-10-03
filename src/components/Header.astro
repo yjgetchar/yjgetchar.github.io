@@ -1,0 +1,164 @@
+---
+import Icon from './Icon.astro';
+import { nav, profile } from '../data/profile';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => !href.includes('#') && (path === href || path.startsWith(`${href}/`));
+---
+
+<header class="sticky top-0 z-50 border-b border-line bg-bg/60 backdrop-blur-md">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-2 sm:py-3" aria-label="주 메뉴">
+    <a
+      href="/"
+      class="inline-flex min-h-11 items-center gap-2 font-heading text-lg font-bold tracking-tight transition-colors hover:text-accent"
+    >
+      <span class="grid size-7 place-items-center rounded-lg bg-accent text-[13px] font-bold text-bg" aria-hidden="true">
+        {profile.shortName.charAt(0)}
+      </span>
+      {profile.name}
+    </a>
+
+    <!-- Desktop -->
+    <div class="hidden items-center gap-7 text-sm md:flex">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+            class:list={[
+              'transition-colors hover:text-fg',
+              isActive(item.href) ? 'font-medium text-fg' : 'text-muted',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <button
+        type="button"
+        data-theme-toggle
+        class="inline-flex size-11 cursor-pointer items-center justify-center text-muted transition-colors hover:text-fg"
+        aria-label="다크 모드 전환"
+      >
+        <span class="theme-icon-moon"><Icon name="moon" class="size-5" /></span>
+        <span class="theme-icon-sun"><Icon name="sun" class="size-5" /></span>
+      </button>
+    </div>
+
+    <!-- Mobile -->
+    <div class="flex items-center gap-1 md:hidden">
+      <button
+        type="button"
+        data-theme-toggle
+        class="inline-flex size-11 cursor-pointer items-center justify-center text-muted transition-colors hover:text-fg"
+        aria-label="다크 모드 전환"
+      >
+        <span class="theme-icon-moon"><Icon name="moon" class="size-5" /></span>
+        <span class="theme-icon-sun"><Icon name="sun" class="size-5" /></span>
+      </button>
+      <button
+        type="button"
+        popovertarget="mobile-menu"
+        class="inline-flex size-11 cursor-pointer items-center justify-center text-muted transition-colors hover:text-fg"
+        aria-label="메뉴 열기"
+      >
+        <Icon name="menu" class="size-6" />
+      </button>
+    </div>
+  </nav>
+
+  <!-- Popover gives us light-dismiss, Esc-to-close and focus handling for free -->
+  <div id="mobile-menu" popover class="mobile-menu glass rounded-2xl p-2 shadow-2xl md:hidden">
+    <ul class="flex flex-col">
+      {
+        nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="flex min-h-12 items-center rounded-xl px-4 text-base text-muted transition-colors hover:bg-accent-soft hover:text-fg"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</header>
+
+<style>
+  .mobile-menu {
+    position: fixed;
+    inset: 4.25rem 1rem auto 1rem;
+    margin: 0;
+    width: auto;
+    color: var(--fg);
+    background-color: var(--surface-strong);
+    opacity: 0;
+    translate: 0 -8px;
+    transition:
+      opacity 180ms ease,
+      translate 180ms ease,
+      display 180ms allow-discrete,
+      overlay 180ms allow-discrete;
+  }
+  .mobile-menu:popover-open {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @starting-style {
+    .mobile-menu:popover-open {
+      opacity: 0;
+      translate: 0 -8px;
+    }
+  }
+
+  /* Show the icon for the scheme you'd switch TO */
+  .theme-icon-sun {
+    display: none;
+  }
+  :global(html[data-theme='dark']) .theme-icon-sun {
+    display: inline-flex;
+  }
+  :global(html[data-theme='dark']) .theme-icon-moon {
+    display: none;
+  }
+</style>
+
+<script>
+  // Two-state toggle per modern dark-mode guidance:
+  //   (1) follow system  ⇄  (2) pin the opposite scheme.
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')!;
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const sys = () => (mq.matches ? 'dark' : 'light');
+
+  function apply(pinned: string | null) {
+    if (pinned) {
+      localStorage.setItem('color-scheme', pinned);
+      meta.content = pinned;
+    } else {
+      localStorage.removeItem('color-scheme');
+      meta.content = 'light dark';
+    }
+    document.documentElement.style.colorScheme = pinned ?? '';
+    document.documentElement.dataset.theme = pinned ?? sys();
+    window.dispatchEvent(new CustomEvent('themechange'));
+  }
+
+  document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const current = document.documentElement.dataset.theme;
+      const next = current === 'dark' ? 'light' : 'dark';
+      apply(next === sys() ? null : next);
+    });
+  });
+
+  // Keep the effective scheme in sync when the OS theme changes.
+  mq.addEventListener('change', () => {
+    if (!localStorage.getItem('color-scheme')) apply(null);
+  });
+
+  // Close the mobile menu after picking an in-page link.
+  const menu = document.getElementById('mobile-menu');
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.hidePopover()));
+</script>

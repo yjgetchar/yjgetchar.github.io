@@ -1,0 +1,25 @@
+---
+import { timeline } from '../data/profile';
+---
+
+<ol class="relative ml-1.5 border-l border-line">
+  {
+    timeline.map((item) => (
+      <li class="relative pb-9 pl-7 last:pb-0" data-reveal>
+        <span
+          class:list={[
+            'absolute top-1.5 -left-[7px] size-3.5 rounded-full border-2 border-bg',
+            item.kind === 'edu' ? 'bg-accent-2' : 'bg-accent',
+          ]}
+          aria-hidden="true"
+        />
+        <p class="font-mono text-xs tracking-wide text-subtle">{item.period}</p>
+        <h3 class="mt-1 font-heading text-lg font-semibold">
+          {item.title}
+          <span class="font-sans text-base font-normal text-muted"> · {item.org}</span>
+        </h3>
+        <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted">{item.body}</p>
+      </li>
+    ))
+  }
+</ol>

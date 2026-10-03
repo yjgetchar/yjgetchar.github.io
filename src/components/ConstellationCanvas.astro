@@ -1,0 +1,302 @@
+---
+/**
+ * Signature interaction: a "tech-stack constellation".
+ * Labelled tech nodes + small stars drift slowly, link up when close,
+ * lean toward the pointer, and scatter with a ripple on click.
+ *
+ * - Honors prefers-reduced-motion (renders one static frame).
+ * - Pauses when the tab is hidden.
+ * - Re-reads theme colours on `themechange`.
+ */
+import { constellation } from '../data/profile';
+---
+
+<canvas
+  id="constellation"
+  class="constellation pointer-events-none fixed inset-0 z-0 h-dvh w-full"
+  aria-hidden="true"
+  data-labels={JSON.stringify(constellation)}></canvas>
+
+<style>
+  /* Probe colours: read back via getComputedStyle so light-dark() resolves. */
+  .constellation {
+    color: var(--accent);
+    border-top-color: var(--accent-2);
+    outline-color: var(--subtle);
+    column-rule-color: var(--fg);
+  }
+</style>
+
+<script>
+  type RGB = [number, number, number];
+  interface Node {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    r: number;
+    label?: string;
+    hue: 0 | 1; // 0 = accent, 1 = accent-2
+    phase: number;
+  }
+  interface Ripple {
+    x: number;
+    y: number;
+    t: number;
+  }
+
+  const canvas = document.getElementById('constellation') as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+
+  if (canvas && ctx) {
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const allLabels: string[] = JSON.parse(canvas.dataset.labels || '[]');
+
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+    let nodes: Node[] = [];
+    const ripples: Ripple[] = [];
+    const pointer = { x: -9999, y: -9999, active: false };
+    let raf = 0;
+    let last = performance.now();
+
+    let colors = { a: [13, 143, 132] as RGB, b: [98, 80, 240] as RGB, label: [138, 145, 158] as RGB, fg: [22, 25, 31] as RGB };
+
+    const toRGB = (s: string): RGB => {
+      const m = s.match(/[\d.]+/g);
+      return m ? [Number(m[0]), Number(m[1]), Number(m[2])] : [128, 128, 128];
+    };
+    const rgba = (c: RGB, a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+    function readColors() {
+      const cs = getComputedStyle(canvas!);
+      colors = {
+        a: toRGB(cs.color),
+        b: toRGB(cs.borderTopColor),
+        label: toRGB(cs.outlineColor),
+        fg: toRGB(cs.columnRuleColor),
+      };
+    }
+
+    function build() {
+      const small = w < 640;
+      const labels = small ? allLabels.slice(0, 8) : allLabels;
+      const stars = Math.round(Math.min(70, (w * h) / (small ? 22000 : 16000)));
+      const rand = (min: number, max: number) => min + Math.random() * (max - min);
+      const speed = 0.012;
+
+      nodes = [
+        ...labels.map<Node>((label, i) => ({
+          x: rand(0.06, 0.94) * w,
+          y: rand(0.08, 0.92) * h,
+          vx: rand(-speed, speed),
+          vy: rand(-speed, speed),
+          r: 2.6,
+          label,
+          hue: (i % 2) as 0 | 1,
+          phase: Math.random() * Math.PI * 2,
+        })),
+        ...Array.from({ length: stars }, (_, i): Node => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: rand(-speed, speed) * 1.4,
+          vy: rand(-speed, speed) * 1.4,
+          r: rand(0.8, 1.7),
+          hue: (i % 3 === 0 ? 1 : 0) as 0 | 1,
+          phase: Math.random() * Math.PI * 2,
+        })),
+      ];
+    }
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas!.width = Math.round(w * dpr);
+      canvas!.height = Math.round(h * dpr);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+      draw(0);
+    }
+
+    function step(dt: number) {
+      const linkR = 170;
+      for (const n of nodes) {
+        // Lean toward the pointer (labels lean less so text stays readable)
+        if (pointer.active) {
+          const dx = pointer.x - n.x;
+          const dy = pointer.y - n.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < linkR * linkR && d2 > 1) {
+            const f = (n.label ? 0.000006 : 0.000014) * dt;
+            n.vx += dx * f;
+            n.vy += dy * f;
+          }
+        }
+        // Ripple impulse
+        for (const rp of ripples) {
+          const dx = n.x - rp.x;
+          const dy = n.y - rp.y;
+          const d = Math.hypot(dx, dy) || 1;
+          const front = rp.t * 0.55;
+          if (Math.abs(d - front) < 30) {
+            const k = (0.05 * (1 - rp.t / 900)) / d;
+            n.vx += dx * k;
+            n.vy += dy * k;
+          }
+        }
+        // Damping toward a gentle cruising speed
+        const sp = Math.hypot(n.vx, n.vy);
+        const max = n.label ? 0.05 : 0.09;
+        if (sp > max) {
+          n.vx *= 0.96;
+          n.vy *= 0.96;
+        }
+        n.x += n.vx * dt;
+        n.y += n.vy * dt;
+        // Soft bounce
+        const pad = n.label ? 40 : 4;
+        if (n.x < pad || n.x > w - pad) n.vx *= -1;
+        if (n.y < pad || n.y > h - pad) n.vy *= -1;
+        n.x = Math.max(pad, Math.min(w - pad, n.x));
+        n.y = Math.max(pad, Math.min(h - pad, n.y));
+      }
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        ripples[i].t += dt;
+        if (ripples[i].t > 900) ripples.splice(i, 1);
+      }
+    }
+
+    function draw(time: number) {
+      ctx!.clearRect(0, 0, w, h);
+      const linkD = w < 640 ? 110 : 140;
+
+      // Links between nearby nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > linkD * linkD) continue;
+          const t = 1 - Math.sqrt(d2) / linkD;
+          const strong = a.label && b.label;
+          ctx!.strokeStyle = rgba(a.hue ? colors.b : colors.a, t * (strong ? 0.4 : 0.18));
+          ctx!.lineWidth = strong ? 1 : 0.7;
+          ctx!.beginPath();
+          ctx!.moveTo(a.x, a.y);
+          ctx!.lineTo(b.x, b.y);
+          ctx!.stroke();
+        }
+      }
+
+      // Pointer links
+      if (pointer.active) {
+        for (const n of nodes) {
+          const d = Math.hypot(n.x - pointer.x, n.y - pointer.y);
+          if (d < 170) {
+            ctx!.strokeStyle = rgba(colors.a, (1 - d / 170) * 0.45);
+            ctx!.lineWidth = 0.8;
+            ctx!.beginPath();
+            ctx!.moveTo(pointer.x, pointer.y);
+            ctx!.lineTo(n.x, n.y);
+            ctx!.stroke();
+          }
+        }
+      }
+
+      // Nodes + labels
+      ctx!.font = '500 11px "JetBrains Mono", ui-monospace, monospace';
+      ctx!.textBaseline = 'middle';
+      for (const n of nodes) {
+        const tw = 0.6 + 0.4 * Math.sin(time * 0.0012 + n.phase);
+        const near = pointer.active && Math.hypot(n.x - pointer.x, n.y - pointer.y) < 120;
+        const c = n.hue ? colors.b : colors.a;
+
+        if (n.label) {
+          ctx!.fillStyle = rgba(c, near ? 0.22 : 0.1);
+          ctx!.beginPath();
+          ctx!.arc(n.x, n.y, n.r * 3.2, 0, Math.PI * 2);
+          ctx!.fill();
+        }
+        ctx!.fillStyle = rgba(c, n.label ? 0.9 : 0.35 + tw * 0.35);
+        ctx!.beginPath();
+        ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx!.fill();
+
+        if (n.label) {
+          ctx!.fillStyle = near ? rgba(colors.fg, 0.85) : rgba(colors.label, 0.55);
+          ctx!.fillText(n.label, n.x + 9, n.y);
+        }
+      }
+
+      // Ripples
+      for (const rp of ripples) {
+        const p = rp.t / 900;
+        ctx!.strokeStyle = rgba(colors.a, (1 - p) * 0.5);
+        ctx!.lineWidth = 1.5;
+        ctx!.beginPath();
+        ctx!.arc(rp.x, rp.y, rp.t * 0.55, 0, Math.PI * 2);
+        ctx!.stroke();
+      }
+    }
+
+    function loop(now: number) {
+      const dt = Math.min(50, now - last);
+      last = now;
+      step(dt);
+      draw(now);
+      raf = requestAnimationFrame(loop);
+    }
+
+    function start() {
+      cancelAnimationFrame(raf);
+      if (reduceMotion.matches || document.hidden) {
+        draw(0);
+        return;
+      }
+      last = performance.now();
+      raf = requestAnimationFrame(loop);
+    }
+
+    // --- events ---------------------------------------------------------
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        if (e.pointerType === 'touch') return;
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+        pointer.active = true;
+      },
+      { passive: true },
+    );
+    document.documentElement.addEventListener('pointerleave', () => (pointer.active = false));
+    window.addEventListener('pointerdown', (e) => {
+      // Ignore clicks on interactive UI so links/buttons feel normal.
+      if ((e.target as Element).closest('a, button, input, label, summary, [popover]')) return;
+      if (reduceMotion.matches) return;
+      ripples.push({ x: e.clientX, y: e.clientY, t: 0 });
+    });
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 150);
+    });
+    document.addEventListener('visibilitychange', start);
+    reduceMotion.addEventListener('change', start);
+    window.addEventListener('themechange', () => {
+      readColors();
+      if (reduceMotion.matches) draw(0);
+    });
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => readColors());
+
+    readColors();
+    resize();
+    start();
+    // Labels use a web font: redraw once fonts are ready.
+    document.fonts?.ready.then(() => draw(performance.now()));
+  }
+</script>
