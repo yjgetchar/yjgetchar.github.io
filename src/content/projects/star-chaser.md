@@ -50,3 +50,17 @@ SQLite  runs / steps / results
 | GitHub 급상승 | 최근 N일 안에 만들어진 저장소 중 스타 상위 |
 | 신규 모델 | OpenAI · Anthropic · Google 신규 모델 스펙과 출처 |
 | Multi-Agent 상태 | Orchestrator → Agent → Tool 구조도, 실행 상태, Tool 호출 로그 |
+
+## 실제 실행 화면
+
+### 1. 멀티 에이전트 다이제스트 메인 대시보드
+![AI Star Chaser 메인 대시보드](/projects/star-chaser/dashboard-main.png)
+자연어 요청 바, 근거 링크가 달린 오늘의 3줄 브리핑, 벤토 그리드(Gemini 4 Argon 핫이슈, 핫토픽 TOP10, 신규 모델 요약, GitHub 급상승)와 30일 키워드 히트맵이 한눈에 제공됩니다.
+
+### 2. Human-in-the-Loop 상호작용 (`needs_input`)
+![Orchestrator 질문 및 선택지 버튼](/projects/star-chaser/needs-input.png)
+"정리해 줘"처럼 요청 범위가 모호할 경우, `ask_user` 도구를 통해 필요한 범위를 객관식 버튼으로 명확히 되묻는 인터랙션 흐름입니다.
+
+### 3. 멀티 에이전트 구조도 및 실행 로그
+![Multi-Agent 상태 및 Step 로그](/projects/star-chaser/agent-architecture.png)
+Orchestrator에서 각 전문 Agent(News, GitHub, Model)로 이어지는 흐름과, 모든 Tool 호출의 인자·결과가 SQLite에 Step 단위로 투명하게 기록됩니다.

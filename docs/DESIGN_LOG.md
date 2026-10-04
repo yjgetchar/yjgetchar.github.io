@@ -29,6 +29,7 @@ Update this file whenever a decision is made or a step is committed.
 | 2026-10-04 | Drop education/language from About; all project covers redone in dark Apple product style (graphite + emerald, one object, no text); **AI Star Chaser** added (featured #2, Portfolio Site moved off the home grid); catchphrase header (`Hero.astro`) with 5 candidates, hidden until picked | Done |
 | 2026-10-04 | **Catchphrase selected:** `Slow is Fast in AI — Just Do AI.` | Done, pushed |
 | 2026-10-04 | Added recent interest (`최근 관심사 Paperclip, multica를 이용한 Agent 구조화.`) right below now-building bar | Done, pushed |
+| 2026-10-04 | Removed GitHub activity section from /about; implemented interactive background effect (`InteractiveBackground.astro`: Metaball Energy Field + Deep Space Nodes + Parallax/Ripple); removed placeholder text and added real gameplay screenshots to Mini Game Heaven and AI Star Chaser | Done |
 
 ## A안 structure (as built)
 

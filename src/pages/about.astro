@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import ExperienceList from '../components/ExperienceList.astro';
-import GitHubActivity from '../components/GitHubActivity.astro';
 import Icon from '../components/Icon.astro';
 import { linkedin, profile, expertise, stack } from '../data/profile';
 ---
@@ -60,12 +59,6 @@ import { linkedin, profile, expertise, stack } from '../data/profile';
     <SectionTitle id="h-stack" title="Stack" sub="자주 쓰는 기술들" />
     <div data-reveal class="card flex flex-wrap gap-2 p-6">
       {stack.map((s) => <span class="chip px-3.5 py-1.5 text-[14px]">{s}</span>)}
-    </div>
-  </section>
-
-  <section class="mt-20" aria-label="GitHub 활동">
-    <div data-reveal class="card p-6">
-      <GitHubActivity weeks={40} />
     </div>
   </section>
 </BaseLayout>
