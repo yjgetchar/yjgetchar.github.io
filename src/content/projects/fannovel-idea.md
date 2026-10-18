@@ -7,8 +7,8 @@ tint: lavender
 tags: [Python, Gemini 2.5 Flash, Search Grounding, Telegram Bot]
 repo: yjgetchar/262Q_Fannovel_idea
 status: Live
-featured: true
-order: 3
+featured: false
+order: 7
 date: 2026-08-15
 highlights:
   - 시놉시스, 캐릭터, 세계관, 플롯 구성에 특화된 창작 페르소나

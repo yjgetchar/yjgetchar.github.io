@@ -30,6 +30,7 @@ Update this file whenever a decision is made or a step is committed.
 | 2026-10-04 | **Catchphrase selected:** `Slow is Fast in AI — Just Do AI.` | Done, pushed |
 | 2026-10-04 | Added recent interest (`최근 관심사 Paperclip, multica를 이용한 Agent 구조화.`) right below now-building bar | Done, pushed |
 | 2026-10-04 | Removed GitHub activity section from /about; implemented interactive background effect (`InteractiveBackground.astro`: Metaball Energy Field + Deep Space Nodes + Parallax/Ripple); removed placeholder text and added real gameplay screenshots to Mini Game Heaven and AI Star Chaser | Done |
+| 2026-10-19 | **Content refresh from current local projects:** added DevPulse Studio (In Progress → drives the now-building bar), DVFS Edge (simulated-only / unrelated-to-work note), YJ Personal Archive, K-con; rewrote Mini Game Heaven (20 games, 300+ tests, CI) and set it to Private. Home grid (6 featured): DevPulse → DVFS Edge → Mini Game Heaven → Star Chaser → Personal Archive → K-con; Fannovel/Autoposting moved to /projects only. New covers in the same graphite + emerald style. Stack marquee updated (C++20, SQLite, Swift, FastAPI, Playwright, Docker). Private repos have no `repo:` link; sensitive material (real-person figures, transcripts, local paths, quota endpoints) excluded | Done, pushed |
 
 ## A안 structure (as built)
 

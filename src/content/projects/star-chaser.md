@@ -7,7 +7,7 @@ tint: blue
 tags: [Python, Multi-Agent, OpenAI Responses API, FastAPI, HTMX, SQLite]
 status: Private
 featured: true
-order: 2
+order: 4
 date: 2026-10-04
 highlights:
   - Orchestrator가 자연어 요청을 읽고 News · GitHub · Model · 키워드 · 브리핑 에이전트에 작업을 나눠 줌

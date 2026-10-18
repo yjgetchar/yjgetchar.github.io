@@ -9,7 +9,7 @@ repo: yjgetchar/yjgetchar.github.io
 demo: https://yjgetchar.github.io
 status: Live
 featured: false
-order: 5
+order: 9
 date: 2026-10-04
 highlights:
   - 왼쪽 고정 사이드바(프로필 · About · 섹션 메뉴)와 오른쪽 스크롤 영역으로 나눈 2단 레이아웃

@@ -6,8 +6,8 @@ cover: ../../assets/projects/autoposting-gemini.jpg
 tint: rose
 tags: [Python, Gemini, Blogger API, Telegram Bot]
 status: Private
-featured: true
-order: 4
+featured: false
+order: 8
 date: 2026-07-30
 highlights:
   - 용어 박스, 목차, 앵커, 팁 박스가 포함된 HTML 서식 자동 생성
