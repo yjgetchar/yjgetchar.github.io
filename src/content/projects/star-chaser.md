@@ -14,6 +14,7 @@ highlights:
   - 대상이 모호하면 ask_user로 되묻고, 선택지 버튼으로 답을 받는 needs_input 흐름
   - 모든 Tool 호출(RSS, GitHub API, 웹 검색, 페이지·PDF 수집)을 SQLite에 단계별로 기록해 근거를 확인할 수 있음
   - 30일 키워드 히트맵과 급상승 감지, 오늘의 3줄 브리핑, 실행 과정 실시간 시각화
+  - 백그라운드 스케줄러로 주기적 자동 갱신, Google · DeepMind · OpenAI · Anthropic · arXiv 공식 피드 수집
   - 네트워크 없이 도는 단위 테스트 60개 이상
 ---
 
