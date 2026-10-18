@@ -5,7 +5,7 @@ category: Game
 cover: ../../assets/projects/mini-game-heaven.jpg
 tint: peach
 tags: [TypeScript, Node.js, WebSocket, Web Audio API, Canvas 2D, Vitest, Playwright, Docker]
-status: Private
+status: Released
 featured: true
 order: 3
 date: 2026-09-28

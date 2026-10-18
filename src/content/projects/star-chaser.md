@@ -5,7 +5,7 @@ category: AI
 cover: ../../assets/projects/star-chaser.jpg
 tint: blue
 tags: [Python, Multi-Agent, OpenAI Responses API, FastAPI, HTMX, SQLite]
-status: Private
+status: Released
 featured: true
 order: 4
 date: 2026-10-04
