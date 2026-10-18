@@ -11,6 +11,7 @@ import { getCollection } from 'astro:content';
 import Icon from './Icon.astro';
 import Avatar from './Avatar.astro';
 import { experience, linkedin, profile, stack } from '../data/profile';
+import { isLocked } from '../lib/projects';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const geminiProjects = projects.filter((p) => p.data.tags.some((t) => /gemini/i.test(t)));
@@ -98,10 +99,17 @@ const suggestions = [
     {
       projects.map((p) => (
         <li>
-          <a href={`/projects/${p.id}`} class="answer-card">
-            <span class="font-semibold">{p.data.title}</span>
-            <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
-          </a>
+          {isLocked(p) ? (
+            <div class="answer-card">
+              <span class="font-semibold">🔒 {p.data.title}</span>
+              <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
+            </div>
+          ) : (
+            <a href={`/projects/${p.id}`} class="answer-card">
+              <span class="font-semibold">{p.data.title}</span>
+              <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
+            </a>
+          )}
         </li>
       ))
     }
@@ -132,10 +140,17 @@ const suggestions = [
     {
       geminiProjects.map((p) => (
         <li>
-          <a href={`/projects/${p.id}`} class="answer-card">
-            <span class="font-semibold">{p.data.title}</span>
-            <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
-          </a>
+          {isLocked(p) ? (
+            <div class="answer-card">
+              <span class="font-semibold">🔒 {p.data.title}</span>
+              <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
+            </div>
+          ) : (
+            <a href={`/projects/${p.id}`} class="answer-card">
+              <span class="font-semibold">{p.data.title}</span>
+              <span class="line-clamp-2 text-[13px] text-muted">{p.data.summary}</span>
+            </a>
+          )}
         </li>
       ))
     }
@@ -299,7 +314,7 @@ const suggestions = [
     padding: 0.6rem 0.8rem;
     transition: border-color 200ms;
   }
-  .ask-dialog :global(.answer-card:hover) {
+  .ask-dialog :global(a.answer-card:hover) {
     border-color: color-mix(in oklab, var(--accent-bg) 55%, transparent);
   }
   .ask-dialog :global(.typing) {
